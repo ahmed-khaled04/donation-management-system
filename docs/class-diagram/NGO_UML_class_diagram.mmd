@@ -1,0 +1,738 @@
+---
+config:
+  class:
+    hideEmptyMembersBox: false
+  layout: elk
+---
+classDiagram
+direction TB
+
+    %% ===================== OBSERVER PATTERN =====================
+    namespace Observer_Pattern {
+        class Subject {
+            +addObserver(o: Observer) void
+            +removeObserver(o: Observer) void
+            +notifyObservers(change: ChangeEvent) void
+        }
+
+        class Observer {
+            +update(source: Subject, change: ChangeEvent) void
+        }
+
+        class ReceiptObserver {
+            +update(source: Subject, change: ChangeEvent) void
+        }
+
+        class ThankYouObserver {
+            -notificationService: NotificationService
+            +update(source: Subject, change: ChangeEvent) void
+        }
+
+        class StatsObserver {
+            -totalRaised: double
+            +update(source: Subject, change: ChangeEvent) void
+        }
+
+        class AttendeeNotificationObserver {
+            -notificationService: NotificationService
+            +update(source: Subject, change: ChangeEvent) void
+        }
+
+        class StockObserver {
+            +update(source: Subject, change: ChangeEvent) void
+        }
+
+        class ChangeEvent {
+            -payload: Object
+            -timestamp: DateTime
+            -type: String
+            +getType() String
+            +getPayload() Object
+            +getTimestamp() DateTime
+        }
+
+    }
+
+    %% ===================== NOTIFICATIONS (Strategy) =====================
+    namespace Notifications_Strategy {
+        class NotificationService {
+            -strategies: Map~Channel, NotificationStrategy~
+            -strategy: NotificationStrategy
+            +registerStrategy(c: Channel, s: NotificationStrategy) void
+            +setStrategy(s: NotificationStrategy) void
+            +sendNotification(to: Person, msg: Message) boolean
+        }
+
+        class NotificationStrategy {
+            +send(to: Person, msg: Message) boolean
+        }
+
+        class EmailStrategy {
+            +send(to: Person, msg: Message) boolean
+        }
+
+        class SmsStrategy {
+            +send(to: Person, msg: Message) boolean
+        }
+
+        class SocialMediaStrategy {
+            +send(to: Person, msg: Message) boolean
+        }
+
+        class Channel {
+            EMAIL
+            SMS
+            SOCIAL
+        }
+
+        class Message {
+            -subject: String
+            -body: String
+            -createdAt: DateTime
+        }
+
+    }
+
+    %% ===================== PEOPLE =====================
+    namespace People {
+        class Person {
+            -id: int
+            -name: String
+            -email: String
+            -phone: String
+            -socialHandle: String
+            -preferredChannel: Channel
+            -passwordHash: String
+        }
+
+        class Donor {
+            -donorType: String
+            -taxId: String
+            -totalDonated: double
+        }
+
+        class Volunteer {
+            -skills: List~Skill~
+            -availability: List~String~
+            -totalHours: double
+            -preferences: List~String~
+        }
+
+        class Beneficiary {
+            -address: String
+            -familySize: int
+            -needs: List~Need~
+        }
+
+        class PersonService {
+            +register(type: String, name: String, email: String, phone: String, password: String) Person
+            +authenticate(email: String, password: String) Person
+            +findById(id: int) Person
+            +searchByName(name: String) List~Person~
+            +update(p: Person) void
+            +delete(id: int) boolean
+        }
+
+    }
+
+    %% ===================== DONATIONS (Factory + Decorator) =====================
+    namespace Donations_Factory_Decorator {
+        class DonationService {
+            -observers: List~Observer~
+            +recordDonation(type: String, donor: Donor, amount: double) Donation
+            +getDonationsByDonor(donor: Donor) List~Donation~
+            +generateTaxStatement(donor: Donor, year: int) String
+            +buildReceipt(donation: Donation, options: List~String~) Receipt
+        }
+
+        class DonationFactory {
+            +create(type: String, donor: Donor, amount: double) Donation$
+        }
+
+        class Donation {
+            -id: int
+            -amount: double
+            -date: DateTime
+            -donor: Donor
+            +getType() String
+        }
+
+        class OnlineDonation {
+            -transactionId: String
+            -gateway: String
+            +getType() String
+        }
+
+        class CheckDonation {
+            -checkNumber: String
+            -bankName: String
+            -clearingDate: DateTime
+            +getType() String
+        }
+
+        class InKindDonation {
+            -itemDescription: String
+            -quantity: int
+            -estimatedValue: double
+            +getType() String
+        }
+
+        class Receipt {
+            +render() String
+        }
+
+        class BasicReceipt {
+            -donation: Donation
+            +render() String
+        }
+
+        class ReceiptDecorator {
+            -wrapped: Receipt
+            +render() String
+        }
+
+        class TaxInfoDecorator {
+            +render() String
+        }
+
+        class ThankYouNoteDecorator {
+            +render() String
+        }
+
+    }
+
+    %% ===================== EVENTS (Factory + Decorator) =====================
+    namespace Events_Factory_Decorator {
+        class EventService {
+            -observers: List~Observer~
+            +createEvent(type: String, name: String, date: DateTime, venue: String) Event
+            +changeDate(event: Event, newDate: DateTime) void
+            +changeVenue(event: Event, newVenue: String) void
+            +registerAttendee(event: Event, person: Person) void
+            +markAttendance(event: Event, person: Person) void
+            +sellTicket(event: Event, person: Person, extras: List~String~) Ticket
+            +sendReminders(event: Event) void
+        }
+
+        class EventFactory {
+            +create(type: String, name: String, date: DateTime, venue: String) Event$
+        }
+
+        class Event {
+            -id: int
+            -name: String
+            -date: DateTime
+            -venue: String
+            -status: EventStatus
+            -attendees: List~Person~
+            -attended: List~Person~
+            +getType() String
+            +register(p: Person) void
+            +markAttendance(p: Person) void
+            +updateDate(newDate: DateTime) void
+            +updateVenue(newVenue: String) void
+            +setStatus(s: EventStatus) void
+        }
+
+        class Fundraiser {
+            -targetAmount: double
+            +getType() String
+        }
+
+        class Workshop {
+            -capacity: int
+            -trainer: String
+            +getType() String
+        }
+
+        class Outreach {
+            -location: String
+            -teamSize: int
+            +getType() String
+        }
+
+        class Ticket {
+            +getPrice() double
+            +getDescription() String
+        }
+
+        class BasicTicket {
+            -basePrice: double
+            -event: Event
+            -holder: Person
+            +getPrice() double
+            +getDescription() String
+        }
+
+        class TicketDecorator {
+            -wrapped: Ticket
+            +getPrice() double
+            +getDescription() String
+        }
+
+        class VipDecorator {
+            +getPrice() double
+            +getDescription() String
+        }
+
+        class MealDecorator {
+            +getPrice() double
+            +getDescription() String
+        }
+
+        class EventStatus {
+            PLANNED
+            ONGOING
+            COMPLETED
+            CANCELLED
+        }
+
+    }
+
+    %% ===================== BENEFICIARIES (Strategy) =====================
+    namespace Beneficiaries_Strategy {
+        class DistributionService {
+            -observers: List~Observer~
+            +recordDistribution(b: Beneficiary, r: Resource, quantity: int) Distribution
+            +getDistributionsByBeneficiary(b: Beneficiary) List~Distribution~
+            +evaluateImpact(programType: String) ImpactReport
+        }
+
+        class Distribution {
+            -id: int
+            -date: DateTime
+            -beneficiary: Beneficiary
+            -resource: Resource
+            -quantity: int
+        }
+
+        class Resource {
+            -id: int
+            -name: String
+            -unit: String
+            -stockQuantity: int
+            -category: ResourceCategory
+        }
+
+        class Need {
+            -id: int
+            -category: ResourceCategory
+            -description: String
+            -priority: int
+        }
+
+        class ImpactEvaluator {
+            -strategy: ImpactEvaluationStrategy
+            +setStrategy(s: ImpactEvaluationStrategy) void
+            +evaluate(distributions: List~Distribution~) ImpactReport
+        }
+
+        class ImpactEvaluationStrategy {
+            +evaluate(distributions: List~Distribution~) ImpactReport
+        }
+
+        class FoodAidImpactStrategy {
+            +evaluate(distributions: List~Distribution~) ImpactReport
+        }
+
+        class EducationImpactStrategy {
+            +evaluate(distributions: List~Distribution~) ImpactReport
+        }
+
+        class ImpactReport {
+            -programName: String
+            -score: double
+            -summary: String
+        }
+
+    }
+
+    %% ===================== VOLUNTEERS =====================
+    namespace Volunteers {
+        class VolunteerService {
+            +assign(v: Volunteer, e: Event, role: String) Assignment
+            +logHours(a: Assignment, hours: double) void
+            +findBySkill(skill: Skill) List~Volunteer~
+            +getAssignmentsByEvent(e: Event) List~Assignment~
+            +generateCertificate(v: Volunteer) VolunteerCertificate
+        }
+
+        class Assignment {
+            -id: int
+            -volunteer: Volunteer
+            -event: Event
+            -role: String
+            -hoursWorked: double
+            -date: DateTime
+        }
+
+        class VolunteerCertificate {
+            -volunteer: Volunteer
+            -totalHours: double
+            -issuedDate: DateTime
+            +render() String
+        }
+
+    }
+
+    %% ===================== LOOKUP TABLES (CRUD) =====================
+    namespace Lookups_CRUD {
+        class Skill {
+            -id: int
+            -name: String
+        }
+
+        class ResourceCategory {
+            -id: int
+            -name: String
+        }
+
+    }
+
+    %% ===================== VIEW (MVC) =====================
+    namespace Views_MVC {
+        class View {
+            +show() void
+            +showMessage(msg: String) void
+        }
+
+        class DonationView {
+            +showDonationList(list) void
+            +showReceipt(text) void
+        }
+
+        class EventView {
+            +showEventList(list) void
+            +showTicket(ticket) void
+        }
+
+        class BeneficiaryView {
+            +showDistributions(list) void
+            +showImpact(score) void
+        }
+
+        class VolunteerView {
+            +showAssignments(list) void
+            +showCertificate(text) void
+        }
+
+        class PersonView {
+            +showLoginForm() void
+            +showSignupForm() void
+            +showProfile(p: Person) void
+        }
+
+        class LookupView {
+            +showTable(items: List) void
+            +showItemForm() void
+        }
+
+    }
+
+    %% ===================== CONTROLLER (MVC) =====================
+    namespace Controllers_MVC {
+        class DonationController {
+            +loadDonations() void
+            +submitDonation(type: String, donorId: int, amount: double) void
+            +generateReceipt(donationId: int, options: List~String~) void
+        }
+
+        class EventController {
+            +loadEvents() void
+            +createEvent(type: String, name: String, date: DateTime, venue: String) void
+            +changeDate(eventId: int, newDate: DateTime) void
+            +registerAttendee(eventId: int, personId: int) void
+            +sellTicket(eventId: int, personId: int, extras: List~String~) void
+        }
+
+        class BeneficiaryController {
+            +loadBeneficiaries() void
+            +recordDistribution(beneficiaryId: int, resourceId: int, quantity: int) void
+            +showImpact(programType: String) void
+        }
+
+        class VolunteerController {
+            +loadVolunteers() void
+            +assign(volunteerId: int, eventId: int, role: String) void
+            +logHours(assignmentId: int, hours: double) void
+            +issueCertificate(volunteerId: int) void
+        }
+
+        class PersonController {
+            +signup(type: String, name: String, email: String, phone: String, password: String) void
+            +login(email: String, password: String) void
+            +search(name: String) void
+            +deletePerson(id: int) void
+        }
+
+        class LookupController {
+            +loadTable(table: String) void
+            +createItem(table: String, name: String) void
+            +updateItem(table: String, id: int, name: String) void
+            +deleteItem(table: String, id: int) void
+        }
+
+    }
+
+    %% ===================== PERSISTENCE (Generic DAO + Singleton) =====================
+    namespace Persistence_Singleton {
+        class GenericDAO~T~ {
+            +insert(item: T) int
+            +findById(id: int) T
+            +findAll() List~T~
+            +update(item: T) void
+            +delete(id: int) boolean
+        }
+
+        class DatabaseManager {
+            -instance: DatabaseManager$
+            -connection: Connection
+            -DatabaseManager()
+            +getInstance() DatabaseManager$
+            +getConnection() Connection
+        }
+
+    }
+
+    %% ===================== STEREOTYPES =====================
+    <<Interface>> Subject
+    <<Interface>> Observer
+    <<Interface>> NotificationStrategy
+    <<enumeration>> Channel
+    <<Abstract>> Person
+    <<Abstract>> Donation
+    <<Interface>> Receipt
+    <<Abstract>> ReceiptDecorator
+    <<Abstract>> Event
+    <<Interface>> Ticket
+    <<Abstract>> TicketDecorator
+    <<enumeration>> EventStatus
+    <<Interface>> ImpactEvaluationStrategy
+    <<Interface>> View
+    <<Singleton>> DatabaseManager
+
+    %% ===================== MODULE COLOURS =====================
+    %% Observer_Pattern
+    style Subject fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#4E2600
+    style Observer fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#4E2600
+    style ReceiptObserver fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#4E2600
+    style ThankYouObserver fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#4E2600
+    style StatsObserver fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#4E2600
+    style AttendeeNotificationObserver fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#4E2600
+    style StockObserver fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#4E2600
+    style ChangeEvent fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#4E2600
+    %% Notifications_Strategy
+    style NotificationService fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#560027
+    style NotificationStrategy fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#560027
+    style EmailStrategy fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#560027
+    style SmsStrategy fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#560027
+    style SocialMediaStrategy fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#560027
+    style Channel fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#560027
+    style Message fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#560027
+    %% People
+    style Person fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
+    style Donor fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
+    style Volunteer fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
+    style Beneficiary fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
+    style PersonService fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
+    %% Donations_Factory_Decorator
+    style DonationService fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style DonationFactory fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style Donation fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style OnlineDonation fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style CheckDonation fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style InKindDonation fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style Receipt fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style BasicReceipt fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style ReceiptDecorator fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style TaxInfoDecorator fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    style ThankYouNoteDecorator fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
+    %% Events_Factory_Decorator
+    style EventService fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style EventFactory fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style Event fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style Fundraiser fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style Workshop fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style Outreach fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style Ticket fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style BasicTicket fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style TicketDecorator fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style VipDecorator fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style MealDecorator fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    style EventStatus fill:#E8EAF6,stroke:#3949AB,stroke-width:2px,color:#1A1F4D
+    %% Beneficiaries_Strategy
+    style DistributionService fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    style Distribution fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    style Resource fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    style Need fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    style ImpactEvaluator fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    style ImpactEvaluationStrategy fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    style FoodAidImpactStrategy fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    style EducationImpactStrategy fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    style ImpactReport fill:#E0F2F1,stroke:#00695C,stroke-width:2px,color:#00302A
+    %% Volunteers
+    style VolunteerService fill:#F1F8E9,stroke:#558B2F,stroke-width:2px,color:#223812
+    style Assignment fill:#F1F8E9,stroke:#558B2F,stroke-width:2px,color:#223812
+    style VolunteerCertificate fill:#F1F8E9,stroke:#558B2F,stroke-width:2px,color:#223812
+    %% Lookups_CRUD
+    style Skill fill:#EFEBE9,stroke:#5D4037,stroke-width:2px,color:#2B1D18
+    style ResourceCategory fill:#EFEBE9,stroke:#5D4037,stroke-width:2px,color:#2B1D18
+    %% Views_MVC
+    style View fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
+    style DonationView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
+    style EventView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
+    style BeneficiaryView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
+    style VolunteerView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
+    style PersonView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
+    style LookupView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
+    %% Controllers_MVC
+    style DonationController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
+    style EventController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
+    style BeneficiaryController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
+    style VolunteerController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
+    style PersonController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
+    style LookupController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
+    %% Persistence_Singleton
+    style GenericDAO fill:#ECEFF1,stroke:#455A64,stroke-width:2px,color:#1C262B
+    style DatabaseManager fill:#ECEFF1,stroke:#455A64,stroke-width:2px,color:#1C262B
+
+    %% ----- relationships: OBSERVER PATTERN -----
+    Subject "1" o-- "0..*" Observer : observers
+    Observer <|.. ReceiptObserver
+    Observer <|.. ThankYouObserver
+    Observer <|.. StatsObserver
+    Observer <|.. AttendeeNotificationObserver
+    Observer <|.. StockObserver
+    Observer ..> ChangeEvent
+
+    %% ----- relationships: NOTIFICATIONS (Strategy) -----
+    NotificationStrategy <|.. EmailStrategy
+    NotificationStrategy <|.. SmsStrategy
+    NotificationStrategy <|.. SocialMediaStrategy
+    NotificationService --> NotificationStrategy : strategies
+    NotificationService ..> Message
+
+    %% ----- relationships: PEOPLE -----
+    Person <|-- Donor
+    Person <|-- Volunteer
+    Person <|-- Beneficiary
+    PersonService ..> Person : manages
+
+    %% ----- relationships: DONATIONS (Factory + Decorator) -----
+    Donation <|-- OnlineDonation
+    Donation <|-- CheckDonation
+    Donation <|-- InKindDonation
+    DonationFactory ..> Donation : creates
+    DonationService ..> DonationFactory
+    Receipt <|.. BasicReceipt
+    Receipt <|.. ReceiptDecorator
+    ReceiptDecorator o--> Receipt : wrapped
+    ReceiptDecorator <|-- TaxInfoDecorator
+    ReceiptDecorator <|-- ThankYouNoteDecorator
+    BasicReceipt --> Donation : donation
+    DonationService ..> Receipt : builds
+    DonationService ..> Donation : records
+
+    %% ----- relationships: EVENTS (Factory + Decorator) -----
+    Event <|-- Fundraiser
+    Event <|-- Workshop
+    Event <|-- Outreach
+    EventFactory ..> Event : creates
+    EventService ..> EventFactory
+    Ticket <|.. BasicTicket
+    Ticket <|.. TicketDecorator
+    TicketDecorator o--> Ticket : wrapped
+    TicketDecorator <|-- VipDecorator
+    TicketDecorator <|-- MealDecorator
+    BasicTicket --> Event : event
+    EventService ..> Ticket : builds
+    Event --> EventStatus : status
+
+    %% ----- relationships: BENEFICIARIES (Strategy) -----
+    Distribution --> Resource : resource
+    DistributionService ..> Distribution : creates
+    ImpactEvaluationStrategy <|.. FoodAidImpactStrategy
+    ImpactEvaluationStrategy <|.. EducationImpactStrategy
+    ImpactEvaluator --> ImpactEvaluationStrategy : strategy
+    DistributionService --> ImpactEvaluator : picks strategy
+    ImpactEvaluator ..> Distribution : scores
+    ImpactEvaluator ..> ImpactReport
+    ImpactEvaluationStrategy ..> ImpactReport
+
+    %% ----- relationships: VOLUNTEERS -----
+    VolunteerService ..> Skill
+    VolunteerService ..> Assignment : creates
+    VolunteerService ..> VolunteerCertificate : creates
+
+    %% ----- relationships: VIEW (MVC) -----
+    View <|.. DonationView
+    View <|.. EventView
+    View <|.. BeneficiaryView
+    View <|.. VolunteerView
+    View <|.. PersonView
+    View <|.. LookupView
+
+    %% ----- relationships: LOOKUP TABLES (CRUD) -----
+    LookupController ..> Skill : manages
+    LookupController ..> ResourceCategory : manages
+
+    %% ----- relationships: PERSISTENCE (Generic DAO + Singleton) -----
+    GenericDAO ..> DatabaseManager : uses connection
+    DatabaseManager --> DatabaseManager : instance
+
+    %% ----- relationships: between sections -----
+    DonationView "1" -- "1" DonationController
+    EventView "1" -- "1" EventController
+    BeneficiaryView "1" -- "1" BeneficiaryController
+    VolunteerView "1" -- "1" VolunteerController
+    PersonView "1" -- "1" PersonController
+    LookupView "1" -- "1" LookupController
+    LookupController ..> GenericDAO : CRUD
+    Need --> ResourceCategory : category
+    Resource --> ResourceCategory : category
+    DonationController --> DonationService
+    EventController --> EventService
+    BeneficiaryController --> DistributionService
+    VolunteerController --> VolunteerService
+    PersonController --> PersonService
+    Subject <|.. DonationService
+    Subject <|.. EventService
+    Subject <|.. DistributionService
+    ReceiptObserver ..> DonationService : observes
+    ThankYouObserver ..> DonationService : observes
+    StatsObserver ..> DonationService : observes
+    AttendeeNotificationObserver ..> EventService : observes
+    StockObserver ..> DistributionService : observes
+    ThankYouObserver --> NotificationService : thank you
+    AttendeeNotificationObserver --> NotificationService : updates
+    Person --> Channel : preferredChannel
+    Donation --> Donor : donor
+    Event "1" o-- "0..*" Person : attendees
+    BasicTicket --> Person : holder
+    Beneficiary "1" *-- "0..*" Need : needs
+    Distribution --> Beneficiary : beneficiary
+    Volunteer --> Skill : skills
+    Assignment --> Volunteer : volunteer
+    Assignment --> Event : event
+    DonationService ..> GenericDAO : stores data
+    EventService ..> GenericDAO : stores data
+    DistributionService ..> GenericDAO : stores data
+    VolunteerService ..> GenericDAO : stores data
+    PersonService ..> GenericDAO : stores data
+    ReceiptObserver ..> Receipt : prints
+    StatsObserver ..> Donor : updates total
+    AttendeeNotificationObserver ..> Event : reads attendees
+    AttendeeNotificationObserver ..> Person : notifies
+    StockObserver ..> Resource : reduces stock
+    StockObserver ..> Distribution : reads
+    NotificationService ..> Person : sends to
+    VolunteerService ..> Volunteer : finds
+    DonationService ..> ChangeEvent : raises
+    EventService ..> ChangeEvent : raises
+    DistributionService ..> ChangeEvent : raises
+    AttendeeNotificationObserver ..> Message
+    DonationController ..> PersonService : finds person
+    EventController ..> PersonService : finds person
+    BeneficiaryController ..> PersonService : finds person
+    VolunteerController ..> PersonService : finds person
+    VolunteerCertificate --> Volunteer : volunteer
