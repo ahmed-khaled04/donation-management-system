@@ -1,6 +1,6 @@
 package impacthub.notification;
 
-import impacthub.person.Person;
+import impacthub.people.Person;
 
 import java.util.EnumMap;
 import java.util.Map;

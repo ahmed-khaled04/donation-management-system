@@ -1,7 +1,7 @@
 package impacthub.observer;
 
 import impacthub.donation.Donation;
-import impacthub.person.Donor;
+import impacthub.people.Donor;
 
 public class StatsObserver implements Observer {
     private double totalRaised;
