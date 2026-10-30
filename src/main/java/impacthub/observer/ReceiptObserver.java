@@ -2,7 +2,7 @@ package impacthub.observer;
 
 import impacthub.donation.Donation;
 import impacthub.donation.DonationService;
-import impacthub.donation.Receipt;
+import impacthub.donation.receipt.Receipt;
 
 import java.util.List;
 
