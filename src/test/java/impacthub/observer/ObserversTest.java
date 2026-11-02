@@ -2,14 +2,15 @@ package impacthub.observer;
 
 import impacthub.beneficiary.Distribution;
 import impacthub.beneficiary.Resource;
-import impacthub.donation.Donation;
 import impacthub.donation.DonationService;
+import impacthub.donation.OnlineDonation;
 import impacthub.event.Event;
+import impacthub.event.Fundraiser;
 import impacthub.notification.Channel;
 import impacthub.notification.Message;
 import impacthub.notification.NotificationService;
-import impacthub.person.Donor;
-import impacthub.person.Person;
+import impacthub.people.Donor;
+import impacthub.people.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,11 +38,11 @@ class ObserversTest {
             return true;
         });
         donationService = new DonationService();
-        donor = new Donor("Sara", Channel.EMAIL);
+        donor = new Donor("Sara", "sara@mail.com", "0100", Channel.EMAIL);
     }
 
     private ChangeEvent donation(double amount) {
-        return new ChangeEvent("DONATION_RECORDED", new Donation(donor, amount));
+        return new ChangeEvent("DONATION_RECORDED", new OnlineDonation(donor, amount));
     }
 
     @Test
@@ -108,9 +109,9 @@ class ObserversTest {
 
     @Test
     void attendeeObserverNotifiesAllAttendeesOnDateAndVenueChange() {
-        Event event = new Event("Gala", LocalDateTime.of(2026, 12, 1, 18, 0), "Hall A");
-        Person p1 = new Donor("A", Channel.EMAIL);
-        Person p2 = new Donor("B", Channel.SMS);
+        Event event = new Fundraiser("Gala", LocalDateTime.of(2026, 12, 1, 18, 0), "Hall A");
+        Person p1 = new Donor("A", "a@mail.com", "0101", Channel.EMAIL);
+        Person p2 = new Donor("B", "b@mail.com", "0102", Channel.SMS);
         event.register(p1);
         event.register(p2);
         AttendeeNotificationObserver obs = new AttendeeNotificationObserver(notifications);
@@ -126,15 +127,15 @@ class ObserversTest {
 
     @Test
     void stockObserverReducesStock() {
-        Resource rice = new Resource(100);
-        new StockObserver().update(null, new ChangeEvent("DISTRIBUTION_RECORDED", new Distribution(rice, 30)));
+        Resource rice = new Resource("Rice", "bag", 100, null);
+        new StockObserver().update(null, new ChangeEvent("DISTRIBUTION_RECORDED", new Distribution(null, rice, 30)));
         assertEquals(70, rice.getStockQuantity());
     }
 
     @Test
     void stockObserverIgnoresOtherEvents() {
-        Resource rice = new Resource(100);
-        new StockObserver().update(null, new ChangeEvent("OTHER", new Distribution(rice, 30)));
+        Resource rice = new Resource("Rice", "bag", 100, null);
+        new StockObserver().update(null, new ChangeEvent("OTHER", new Distribution(null, rice, 30)));
         assertEquals(100, rice.getStockQuantity());
     }
 }
