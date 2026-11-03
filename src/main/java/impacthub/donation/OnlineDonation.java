@@ -4,6 +4,8 @@ import impacthub.people.Donor;
 
 /** A donation paid online through a payment gateway. */
 public class OnlineDonation extends Donation {
+    private static final long serialVersionUID = 1L;
+
     private final String transactionId;
     private final String gateway;
 

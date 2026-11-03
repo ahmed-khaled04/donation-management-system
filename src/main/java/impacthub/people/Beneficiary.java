@@ -8,6 +8,8 @@ import java.util.List;
 
 /** A person or family that receives help, with their recorded needs. */
 public class Beneficiary extends Person {
+    private static final long serialVersionUID = 1L;
+
     private String address = "";
     private int familySize = 1;
     private final List<Need> needs = new ArrayList<>();

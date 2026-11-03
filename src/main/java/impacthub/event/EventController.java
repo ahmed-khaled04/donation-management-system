@@ -63,4 +63,13 @@ public class EventController {
         }
         view.showTicket(eventService.sellTicket(e, p, extras));
     }
+
+    public void loadTickets(int eventId) {
+        Event e = events.findById(eventId);
+        if (e == null) {
+            view.showMessage("No event with id " + eventId + ".");
+            return;
+        }
+        view.showTicketList(eventService.getTicketsByEvent(e));
+    }
 }

@@ -14,19 +14,30 @@ public class VolunteerService {
     private final GenericDAO<Person> people = new GenericDAO<>(Person.class);
 
     public Assignment assign(Volunteer v, Event e, String role) {
+        if (role == null || role.isBlank()) {
+            throw new IllegalArgumentException("Please enter a role.");
+        }
+        boolean alreadyAssigned = getAssignmentsByEvent(e).stream()
+                .anyMatch(existing -> existing.getVolunteer().getId() == v.getId());
+        if (alreadyAssigned) {
+            throw new IllegalArgumentException(v.getName() + " is already assigned to " + e.getName() + ".");
+        }
         Assignment a = new Assignment(v, e, role);
         assignments.insert(a);
         return a;
     }
 
     public void logHours(Assignment a, double hours) {
-        if (hours <= 0) {
+        if (!Double.isFinite(hours) || hours <= 0) {
             throw new IllegalArgumentException("Hours must be more than 0.");
+        }
+        // check the volunteer first, so nothing is half saved if they were deleted
+        if (!(people.findById(a.getVolunteer().getId()) instanceof Volunteer v)) {
+            throw new IllegalArgumentException(a.getVolunteer().getName() + " no longer exists, so hours cannot be logged.");
         }
         a.setHoursWorked(a.getHoursWorked() + hours);
         assignments.update(a);
         // add the hours to the saved volunteer too
-        Volunteer v = (Volunteer) people.findById(a.getVolunteer().getId());
         v.setTotalHours(v.getTotalHours() + hours);
         people.update(v);
     }

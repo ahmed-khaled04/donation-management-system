@@ -99,13 +99,22 @@ public class EventView implements View {
             }
         });
 
+        Button listTickets = new Button("List tickets");
+        listTickets.setOnAction(e -> {
+            try {
+                controller.loadTickets(Integer.parseInt(eventId.getText().trim()));
+            } catch (NumberFormatException ex) {
+                showMessage("Please enter a number for the event id.");
+            }
+        });
+
         output.setEditable(false);
         output.setPrefRowCount(12);
         VBox root = new VBox(8,
                 new Label("New event"), new HBox(8, type, name), new HBox(8, date, venue, create),
                 load,
                 new Label("Existing event (use the event id)"), new HBox(8, eventId, newDate, change),
-                new HBox(8, personId, register), new HBox(8, vip, meal, sell),
+                new HBox(8, personId, register), new HBox(8, vip, meal, sell, listTickets),
                 output);
         root.setStyle("-fx-padding: 10;");
 
@@ -129,6 +138,11 @@ public class EventView implements View {
     }
 
     public void showTicket(Ticket ticket) {
-        showMessage("Ticket: " + ticket.getDescription() + " | price " + ticket.getPrice());
+        showMessage("Ticket #" + ticket.getId() + ": " + ticket.getDescription() + " | price " + ticket.getPrice());
+    }
+
+    public void showTicketList(List<Ticket> list) {
+        showMessage("--- " + list.size() + " ticket(s) for this event ---");
+        list.forEach(this::showTicket);
     }
 }

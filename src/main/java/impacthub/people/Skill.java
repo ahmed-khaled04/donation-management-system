@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /** Lookup table row: a skill a volunteer can have. */
 public class Skill implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private String name;
 

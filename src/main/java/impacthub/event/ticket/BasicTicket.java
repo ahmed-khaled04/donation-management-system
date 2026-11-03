@@ -5,6 +5,9 @@ import impacthub.people.Person;
 
 /** A standard ticket for one person to one event. */
 public class BasicTicket implements Ticket {
+    private static final long serialVersionUID = 1L;
+
+    private int id;
     private final double basePrice;
     private final Event event;
     private final Person holder;
@@ -13,6 +16,16 @@ public class BasicTicket implements Ticket {
         this.basePrice = basePrice;
         this.event = event;
         this.holder = holder;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public Event getEvent() {
+        return event;
     }
 
     @Override

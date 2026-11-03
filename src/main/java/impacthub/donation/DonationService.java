@@ -21,7 +21,7 @@ public class DonationService implements Subject {
     private final GenericDAO<Person> people = new GenericDAO<>(Person.class);
 
     public Donation recordDonation(String type, Donor donor, double amount) {
-        if (amount <= 0) {
+        if (!Double.isFinite(amount) || amount <= 0) {
             throw new IllegalArgumentException("The amount must be more than 0.");
         }
         Donation donation = DonationFactory.create(type, donor, amount);
@@ -29,6 +29,11 @@ public class DonationService implements Subject {
         notifyObservers(new ChangeEvent("DONATION_RECORDED", donation));
         people.update(donation.getDonor()); // save the new total set by StatsObserver
         return donation;
+    }
+
+    /** Every recorded donation, including those of donors who were deleted later. */
+    public List<Donation> getAllDonations() {
+        return donations.findAll();
     }
 
     public List<Donation> getDonationsByDonor(Donor donor) {

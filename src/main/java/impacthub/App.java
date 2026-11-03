@@ -6,6 +6,7 @@ import impacthub.beneficiary.Need;
 import impacthub.beneficiary.Resource;
 import impacthub.donation.DonationService;
 import impacthub.donation.DonationView;
+import impacthub.event.Event;
 import impacthub.event.EventService;
 import impacthub.event.EventView;
 import impacthub.lookup.LookupView;
@@ -59,7 +60,7 @@ public class App extends Application {
         distributionService.addObserver(new StockObserver());
         VolunteerService volunteerService = new VolunteerService();
 
-        if (personService.searchByName("").isEmpty()) {
+        if (isEmptyDatabase(personService)) {
             addSampleData(personService, eventService);
         }
 
@@ -85,6 +86,15 @@ public class App extends Application {
         stage.setTitle("Impact Hub");
         stage.setScene(new Scene(root, 380, 360));
         stage.show();
+    }
+
+    /** Deleting every person must not bring the sample data back on top of the other tables. */
+    private static boolean isEmptyDatabase(PersonService personService) {
+        return personService.searchByName("").isEmpty()
+                && new GenericDAO<>(Skill.class).findAll().isEmpty()
+                && new GenericDAO<>(ResourceCategory.class).findAll().isEmpty()
+                && new GenericDAO<>(Resource.class).findAll().isEmpty()
+                && new GenericDAO<>(Event.class).findAll().isEmpty();
     }
 
     /** First run only: a few people, lookup rows, resources and an event to try the app with. */

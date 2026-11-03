@@ -4,6 +4,8 @@ import impacthub.notification.Channel;
 
 /** A person or company that gives donations. */
 public class Donor extends Person {
+    private static final long serialVersionUID = 1L;
+
     private String donorType = "Individual";
     private String taxId = "";
     private double totalDonated;

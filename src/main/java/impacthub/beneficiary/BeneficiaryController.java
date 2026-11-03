@@ -57,6 +57,10 @@ public class BeneficiaryController {
     }
 
     public void showImpact(String programType) {
-        view.showImpact(distributionService.evaluateImpact(programType));
+        try {
+            view.showImpact(distributionService.evaluateImpact(programType));
+        } catch (IllegalArgumentException e) {
+            view.showMessage(e.getMessage());
+        }
     }
 }

@@ -4,6 +4,8 @@ import impacthub.people.Donor;
 
 /** A donation of goods; the amount is their estimated value. */
 public class InKindDonation extends Donation {
+    private static final long serialVersionUID = 1L;
+
     private final String itemDescription;
     private final int quantity;
     private final double estimatedValue;

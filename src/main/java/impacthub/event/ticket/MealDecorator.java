@@ -2,6 +2,8 @@ package impacthub.event.ticket;
 
 /** Adds dinner to a ticket. */
 public class MealDecorator extends TicketDecorator {
+    private static final long serialVersionUID = 1L;
+
     public MealDecorator(Ticket wrapped) {
         super(wrapped);
     }

@@ -20,6 +20,7 @@ public class EventService implements Subject {
 
     private final List<Observer> observers = new ArrayList<>();
     private final GenericDAO<Event> events = new GenericDAO<>(Event.class);
+    private final GenericDAO<Ticket> tickets = new GenericDAO<>(Ticket.class);
 
     public Event createEvent(String type, String name, LocalDateTime date, String venue) {
         Event event = EventFactory.create(type, name, date, venue);
@@ -59,7 +60,14 @@ public class EventService implements Subject {
         if (extras.contains("MEAL")) {
             ticket = new MealDecorator(ticket);
         }
+        tickets.insert(ticket);
         return ticket;
+    }
+
+    public List<Ticket> getTicketsByEvent(Event event) {
+        return tickets.findAll().stream()
+                .filter(t -> t.getEvent().getId() == event.getId())
+                .toList();
     }
 
     public void sendReminders(Event event) {

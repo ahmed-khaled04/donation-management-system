@@ -42,9 +42,13 @@ public class VolunteerController {
             view.showMessage("Check the volunteer id and event id.");
             return;
         }
-        Assignment a = volunteerService.assign(v, e, role);
-        view.showMessage("Assignment #" + a.getId() + ": " + v.getName() + " is " + role + " at " + e.getName() + ".");
-        view.showAssignments(volunteerService.getAssignmentsByEvent(e));
+        try {
+            Assignment a = volunteerService.assign(v, e, role);
+            view.showMessage("Assignment #" + a.getId() + ": " + v.getName() + " is " + role + " at " + e.getName() + ".");
+            view.showAssignments(volunteerService.getAssignmentsByEvent(e));
+        } catch (IllegalArgumentException ex) {
+            view.showMessage(ex.getMessage());
+        }
     }
 
     public void logHours(int assignmentId, double hours) {

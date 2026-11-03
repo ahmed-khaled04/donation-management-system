@@ -7,6 +7,8 @@ import java.util.List;
 
 /** A person who gives their time, with skills, availability and preferences. */
 public class Volunteer extends Person {
+    private static final long serialVersionUID = 1L;
+
     private final List<Skill> skills = new ArrayList<>();
     private final List<String> availability = new ArrayList<>();
     private double totalHours;

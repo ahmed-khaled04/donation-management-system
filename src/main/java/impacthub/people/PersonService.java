@@ -1,5 +1,6 @@
 package impacthub.people;
 
+import impacthub.event.Event;
 import impacthub.notification.Channel;
 import impacthub.persistence.GenericDAO;
 
@@ -12,8 +13,13 @@ import java.util.List;
 /** Sign-up, login, search, update and delete for all people. */
 public class PersonService {
     private final GenericDAO<Person> people = new GenericDAO<>(Person.class);
+    private final GenericDAO<Event> events = new GenericDAO<>(Event.class);
 
     public Person register(String type, String name, String email, String phone, String password) {
+        boolean emailTaken = people.findAll().stream().anyMatch(existing -> existing.getEmail().equalsIgnoreCase(email));
+        if (emailTaken) {
+            throw new IllegalArgumentException("The e-mail " + email + " is already registered.");
+        }
         Person p = switch (type) {
             case "Donor" -> new Donor(name, email, phone, Channel.EMAIL);
             case "Volunteer" -> new Volunteer(name, email, phone, Channel.EMAIL);
@@ -47,12 +53,32 @@ public class PersonService {
                 .toList();
     }
 
+    /** Saves the person and refreshes the copy each event keeps in its attendee list. */
     public void update(Person p) {
         people.update(p);
+        for (Event event : events.findAll()) {
+            List<Person> attendees = event.getAttendees();
+            for (int i = 0; i < attendees.size(); i++) {
+                if (attendees.get(i).getId() == p.getId()) {
+                    attendees.set(i, p);
+                    events.update(event);
+                    break;
+                }
+            }
+        }
     }
 
+    /** Deletes the person and takes them off every event, so they are no longer notified. */
     public boolean delete(int id) {
-        return people.delete(id);
+        boolean deleted = people.delete(id);
+        if (deleted) {
+            for (Event event : events.findAll()) {
+                if (event.getAttendees().removeIf(attendee -> attendee.getId() == id)) {
+                    events.update(event);
+                }
+            }
+        }
+        return deleted;
     }
 
     private static String hash(String password) {

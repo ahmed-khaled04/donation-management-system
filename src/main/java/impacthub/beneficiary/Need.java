@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 /** Something a beneficiary needs; priority 1 is the most urgent. */
 public class Need implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private final ResourceCategory category;
     private final String description;

@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /** A quantity of a resource handed to a beneficiary. */
 public class Distribution implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private final LocalDateTime date;
     private final Beneficiary beneficiary;

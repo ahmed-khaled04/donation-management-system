@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 /** Base class for everyone the organization works with. */
 public abstract class Person implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private String name;
     private String email;

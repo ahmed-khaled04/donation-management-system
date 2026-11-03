@@ -9,6 +9,8 @@ import java.util.List;
 
 /** An event the organization runs, with its registered and attending people. */
 public abstract class Event implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private final String name;
     private LocalDateTime date;

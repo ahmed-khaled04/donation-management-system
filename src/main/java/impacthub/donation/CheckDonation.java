@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 /** A donation paid by check; it clears a few days after it is received. */
 public class CheckDonation extends Donation {
+    private static final long serialVersionUID = 1L;
+
     private final String checkNumber;
     private final String bankName;
     private final LocalDateTime clearingDate;

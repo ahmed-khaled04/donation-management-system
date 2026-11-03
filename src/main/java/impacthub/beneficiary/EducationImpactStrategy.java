@@ -14,8 +14,8 @@ public class EducationImpactStrategy implements ImpactEvaluationStrategy {
     }
 
     private boolean meetsANeed(Distribution d) {
-        String category = d.getResource().getCategory().getName();
+        int category = d.getResource().getCategory().getId();
         return d.getBeneficiary().getNeeds().stream()
-                .anyMatch(n -> n.getCategory().getName().equalsIgnoreCase(category));
+                .anyMatch(n -> n.getCategory().getId() == category);
     }
 }

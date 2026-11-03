@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /** A volunteer's role at an event and the hours they worked there. */
 public class Assignment implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private final Volunteer volunteer;
     private final Event event;

@@ -1,10 +1,8 @@
 package impacthub.donation;
 
 import impacthub.people.Donor;
-import impacthub.people.Person;
 import impacthub.people.PersonService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** Handles the Donations window's actions. */
@@ -20,7 +18,7 @@ public class DonationController {
     }
 
     public void loadDonations() {
-        view.showDonationList(allDonations());
+        view.showDonationList(donationService.getAllDonations());
     }
 
     public void submitDonation(String type, int donorId, double amount) {
@@ -38,22 +36,12 @@ public class DonationController {
     }
 
     public void generateReceipt(int donationId, List<String> options) {
-        for (Donation d : allDonations()) {
+        for (Donation d : donationService.getAllDonations()) {
             if (d.getId() == donationId) {
                 view.showReceipt(donationService.buildReceipt(d, options).render());
                 return;
             }
         }
         view.showMessage("No donation with id " + donationId + ".");
-    }
-
-    private List<Donation> allDonations() {
-        List<Donation> all = new ArrayList<>();
-        for (Person p : personService.searchByName("")) {
-            if (p instanceof Donor donor) {
-                all.addAll(donationService.getDonationsByDonor(donor));
-            }
-        }
-        return all;
     }
 }

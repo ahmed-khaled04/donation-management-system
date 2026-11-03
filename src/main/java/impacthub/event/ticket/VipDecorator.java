@@ -2,6 +2,8 @@ package impacthub.event.ticket;
 
 /** Adds VIP seating to a ticket. */
 public class VipDecorator extends TicketDecorator {
+    private static final long serialVersionUID = 1L;
+
     public VipDecorator(Ticket wrapped) {
         super(wrapped);
     }

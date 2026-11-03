@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /** A donation made by a donor. Subclasses are the donation methods. */
 public abstract class Donation implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private final double amount;
     private final LocalDateTime date;

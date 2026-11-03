@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /** Lookup table row: a category of resources and needs (e.g. Food, Education). */
 public class ResourceCategory implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private String name;
 

@@ -15,9 +15,13 @@ public class PersonController {
             view.showMessage("Name, email and password are required.");
             return;
         }
-        Person p = personService.register(type, name, email, phone, password);
-        view.showMessage("Signed up:");
-        view.showProfile(p);
+        try {
+            Person p = personService.register(type, name, email, phone, password);
+            view.showMessage("Signed up:");
+            view.showProfile(p);
+        } catch (IllegalArgumentException e) {
+            view.showMessage(e.getMessage());
+        }
     }
 
     public void login(String email, String password) {

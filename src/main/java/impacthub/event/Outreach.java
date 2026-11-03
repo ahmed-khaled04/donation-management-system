@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 /** A field program where a team goes out to a community. */
 public class Outreach extends Event {
+    private static final long serialVersionUID = 1L;
+
     private final String location;
     private final int teamSize;
 
