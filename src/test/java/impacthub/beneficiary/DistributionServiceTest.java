@@ -106,11 +106,50 @@ class DistributionServiceTest {
     }
 
     @Test
-    void aRenamedProgramIsRefusedNotScoredAsZero() {
+    void aRenamedFoodCategoryIsStillScoredAsFoodAid() {
+        service.recordDistribution(fatma, rice, 1);
+        food.setName("food updated");
+        categories.update(food);
+
+        ImpactReport report = service.evaluateImpact("Food");
+        assertEquals("Food aid", report.getProgramName());
+        assertEquals(5, report.getScore());
+    }
+
+    @Test
+    void aRenamedEducationCategoryIsStillScoredAsEducation() {
         service.recordDistribution(fatma, kit, 1);
         renameEducation("Schooling");
-        assertThrows(IllegalArgumentException.class, () -> service.evaluateImpact("Education"));
-        assertThrows(IllegalArgumentException.class, () -> service.evaluateImpact("Schooling"));
+
+        ImpactReport report = service.evaluateImpact("Education");
+        assertEquals("Education", report.getProgramName());
+        assertTrue(report.getSummary().startsWith("0 of 1"));
+    }
+
+    @Test
+    void newDistributionsAfterARenameAreCountedToo() {
+        food.setName("food updated");
+        categories.update(food);
+        service.recordDistribution(fatma, resources.findById(rice.getId()), 1);
+        assertEquals(5, service.evaluateImpact("Food").getScore());
+    }
+
+    @Test
+    void otherCategoriesAreNotPartOfAProgram() {
+        ResourceCategory health = new ResourceCategory("Health");
+        categories.insert(health);
+        Resource masks = new Resource("Masks", "boxes", 10, health);
+        resources.insert(masks);
+        service.recordDistribution(hassan, masks, 1);
+
+        assertEquals(0, service.evaluateImpact("Food").getScore());
+        assertTrue(service.evaluateImpact("Education").getSummary().startsWith("0 of 0"));
+    }
+
+    @Test
+    void aProgramWithNoCategoryIsRefused() {
+        categories.delete(food.getId());
+        assertThrows(IllegalArgumentException.class, () -> service.evaluateImpact("Food"));
     }
 
     @Test

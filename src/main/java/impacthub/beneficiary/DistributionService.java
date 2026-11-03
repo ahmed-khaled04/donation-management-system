@@ -38,7 +38,7 @@ public class DistributionService implements Subject {
                 .toList();
     }
 
-    /** programType is "Food" (people fed) or "Education" (needs met), and must match a resource category name. */
+    /** programType is "Food" (people fed) or "Education" (needs met); it covers the categories in that program. */
     public ImpactReport evaluateImpact(String programType) {
         if (programType.equalsIgnoreCase("Food")) {
             evaluator.setStrategy(new FoodAidImpactStrategy());
@@ -49,11 +49,11 @@ public class DistributionService implements Subject {
         }
         // saved distributions keep the category name they had, so match on the id, which never changes
         Set<Integer> categoryIds = categories.findAll().stream()
-                .filter(c -> c.getName().equalsIgnoreCase(programType))
+                .filter(c -> programType.equalsIgnoreCase(c.getProgram()))
                 .map(ResourceCategory::getId)
                 .collect(Collectors.toSet());
         if (categoryIds.isEmpty()) {
-            throw new IllegalArgumentException("No resource category is named " + programType + ", so its impact cannot be evaluated.");
+            throw new IllegalArgumentException("No resource category belongs to the " + programType + " program, so its impact cannot be evaluated.");
         }
         List<Distribution> inProgram = distributions.findAll().stream()
                 .filter(d -> categoryIds.contains(d.getResource().getCategory().getId()))

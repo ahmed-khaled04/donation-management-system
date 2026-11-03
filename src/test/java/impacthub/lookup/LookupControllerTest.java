@@ -192,6 +192,15 @@ class LookupControllerTest {
     }
 
     @Test
+    void renamingKeepsTheImpactProgramAfterItIsSavedAndLoaded() {
+        ResourceCategory food = category("Food");
+        controller.updateItem("ResourceCategory", food.getId(), "food updated");
+        ResourceCategory saved = categories.findById(food.getId());
+        assertEquals("food updated", saved.getName());
+        assertEquals("Food", saved.getProgram());
+    }
+
+    @Test
     void reportsRowsThatDoNotExist() {
         controller.updateItem("Skill", 999, "x");
         controller.deleteItem("Skill", 999);
