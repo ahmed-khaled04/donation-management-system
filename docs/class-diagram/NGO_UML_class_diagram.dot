@@ -126,6 +126,9 @@ digraph G {
   Person -> Volunteer [dir="back", arrowtail="empty", color="#36425c"];
   Person -> Beneficiary [dir="back", arrowtail="empty", color="#36425c"];
   PersonService -> Person [arrowhead="vee", color="#6b7690", style="dashed", label="manages"];
+  PersonService -> Donor [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  PersonService -> Volunteer [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  PersonService -> Beneficiary [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
   Donation -> OnlineDonation [dir="back", arrowtail="empty", color="#36425c"];
   Donation -> CheckDonation [dir="back", arrowtail="empty", color="#36425c"];
   Donation -> InKindDonation [dir="back", arrowtail="empty", color="#36425c"];
@@ -139,6 +142,12 @@ digraph G {
   BasicReceipt -> Donation [arrowhead="vee", color="#4d5b78", label="donation"];
   DonationService -> Receipt [arrowhead="vee", color="#6b7690", style="dashed", label="builds"];
   DonationService -> Donation [arrowhead="vee", color="#6b7690", style="dashed", label="records"];
+  DonationFactory -> OnlineDonation [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  DonationFactory -> CheckDonation [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  DonationFactory -> InKindDonation [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  DonationService -> BasicReceipt [arrowhead="vee", color="#6b7690", style="dashed", label="wraps"];
+  DonationService -> TaxInfoDecorator [arrowhead="vee", color="#6b7690", style="dashed", label="adds"];
+  DonationService -> ThankYouNoteDecorator [arrowhead="vee", color="#6b7690", style="dashed", label="adds"];
   Event -> Fundraiser [dir="back", arrowtail="empty", color="#36425c"];
   Event -> Workshop [dir="back", arrowtail="empty", color="#36425c"];
   Event -> Outreach [dir="back", arrowtail="empty", color="#36425c"];
@@ -152,6 +161,12 @@ digraph G {
   BasicTicket -> Event [arrowhead="vee", color="#4d5b78", label="event"];
   EventService -> Ticket [arrowhead="vee", color="#6b7690", style="dashed", label="builds"];
   Event -> EventStatus [arrowhead="vee", color="#4d5b78", label="status"];
+  EventFactory -> Fundraiser [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  EventFactory -> Workshop [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  EventFactory -> Outreach [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  EventService -> BasicTicket [arrowhead="vee", color="#6b7690", style="dashed", label="wraps"];
+  EventService -> VipDecorator [arrowhead="vee", color="#6b7690", style="dashed", label="adds"];
+  EventService -> MealDecorator [arrowhead="vee", color="#6b7690", style="dashed", label="adds"];
   Distribution -> Resource [arrowhead="vee", color="#4d5b78", label="resource"];
   DistributionService -> Distribution [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
   ImpactEvaluationStrategy -> FoodAidImpactStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
@@ -161,6 +176,8 @@ digraph G {
   ImpactEvaluator -> Distribution [arrowhead="vee", color="#6b7690", style="dashed", label="scores"];
   ImpactEvaluator -> ImpactReport [arrowhead="vee", color="#6b7690", style="dashed"];
   ImpactEvaluationStrategy -> ImpactReport [arrowhead="vee", color="#6b7690", style="dashed"];
+  DistributionService -> FoodAidImpactStrategy [arrowhead="vee", color="#6b7690", style="dashed", label="picks"];
+  DistributionService -> EducationImpactStrategy [arrowhead="vee", color="#6b7690", style="dashed", label="picks"];
   VolunteerService -> Skill [arrowhead="vee", color="#6b7690", style="dashed"];
   VolunteerService -> Assignment [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
   VolunteerService -> VolunteerCertificate [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
@@ -181,6 +198,11 @@ digraph G {
   PersonView -> PersonController [arrowhead="none", color="#4d5b78"];
   LookupView -> LookupController [arrowhead="none", color="#4d5b78"];
   LookupController -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="CRUD"];
+  LookupView -> Skill [arrowhead="vee", color="#6b7690", style="dashed", label="shows"];
+  LookupView -> ResourceCategory [arrowhead="vee", color="#6b7690", style="dashed", label="shows"];
+  EventController -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="finds by id"];
+  VolunteerController -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="finds by id"];
+  BeneficiaryController -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="finds by id"];
   Need -> ResourceCategory [arrowhead="vee", color="#4d5b78", label="category"];
   Resource -> ResourceCategory [arrowhead="vee", color="#4d5b78", label="category"];
   DonationController -> DonationService [arrowhead="vee", color="#4d5b78"];
@@ -224,6 +246,10 @@ digraph G {
   EventService -> ChangeEvent [arrowhead="vee", color="#6b7690", style="dashed", label="raises"];
   DistributionService -> ChangeEvent [arrowhead="vee", color="#6b7690", style="dashed", label="raises"];
   AttendeeNotificationObserver -> Message [arrowhead="vee", color="#6b7690", style="dashed"];
+  ThankYouObserver -> Message [arrowhead="vee", color="#6b7690", style="dashed"];
+  ReceiptObserver -> Donation [arrowhead="vee", color="#6b7690", style="dashed", label="reads"];
+  StatsObserver -> Donation [arrowhead="vee", color="#6b7690", style="dashed", label="reads"];
+  ThankYouObserver -> Donation [arrowhead="vee", color="#6b7690", style="dashed", label="reads"];
   DonationController -> PersonService [arrowhead="vee", color="#6b7690", style="dashed", label="finds person"];
   EventController -> PersonService [arrowhead="vee", color="#6b7690", style="dashed", label="finds person"];
   BeneficiaryController -> PersonService [arrowhead="vee", color="#6b7690", style="dashed", label="finds person"];

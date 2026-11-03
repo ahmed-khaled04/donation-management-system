@@ -1,0 +1,83 @@
+digraph G {
+  graph [layout=dot, rankdir=LR, splines=true, overlap=false, compound=true, newrank=true,
+         nodesep=0.45, ranksep=1.1, remincross=true, mclimit=4, pad=0.5, bgcolor="#fcfbf8", fontname="Helvetica,sans-Serif",
+         labelloc=t, labeljust=l, style="rounded,filled", penwidth=2,
+         label=<<FONT POINT-SIZE="30" COLOR="#263147"><B>UML Class Diagram</B></FONT><BR ALIGN="LEFT"/><FONT POINT-SIZE="17" COLOR="#6a7489">Decorator pattern - receipts and tickets</FONT><BR ALIGN="LEFT"/> <BR ALIGN="LEFT"/>>];
+  node [shape=plain, fontname="Helvetica,sans-Serif", fontsize=11];
+  edge [fontname="Helvetica,sans-Serif", fontsize=10, fontcolor="#4a5468", penwidth=1.7, arrowsize=1.2];
+  subgraph cluster_OBS {
+    label=<<FONT POINT-SIZE="15" COLOR="#6f674a"><B>OBSERVERS | OBSERVER</B></FONT>>; fillcolor="#fff8dc"; color="#f7e7a6"; margin=14;
+    ReceiptObserver [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c0b481"><TR><TD BGCOLOR="#f7e7a6" STYLE="ROUNDED" CELLPADDING="4"><B>ReceiptObserver</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+update(source: Subject, change: ChangeEvent): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_NOTI {
+    label=<<FONT POINT-SIZE="15" COLOR="#55676c"><B>NOTIFICATIONS | STRATEGY</B></FONT>>; fillcolor="#e6f6fa"; color="#bde5f0"; margin=14;
+  }
+  subgraph cluster_PEOPLE {
+    label=<<FONT POINT-SIZE="15" COLOR="#54675b"><B>PEOPLE</B></FONT>>; fillcolor="#e7f7ed"; color="#bce6cb"; margin=14;
+    Person [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#92b39e"><TR><TD BGCOLOR="#bce6cb" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«abstract»</FONT><BR/><I><B>Person</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-name: String<BR ALIGN="LEFT"/>-email: String<BR ALIGN="LEFT"/>-phone: String<BR ALIGN="LEFT"/>-socialHandle: String<BR ALIGN="LEFT"/>-preferredChannel: Channel<BR ALIGN="LEFT"/>-passwordHash: String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_DON {
+    label=<<FONT POINT-SIZE="15" COLOR="#635e6d"><B>DONATIONS | FACTORY + DECORATOR</B></FONT>>; fillcolor="#f1ecfb"; color="#dcd1f4"; margin=14;
+    DonationService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>DonationService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-observers: List&lt;Observer&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+recordDonation(type: String, donor: Donor, amount: double): Donation<BR ALIGN="LEFT"/>+getDonationsByDonor(donor: Donor): List&lt;Donation&gt;<BR ALIGN="LEFT"/>+generateTaxStatement(donor: Donor, year: int): String<BR ALIGN="LEFT"/>+buildReceipt(donation: Donation, options: List&lt;String&gt;): Receipt<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Donation [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«abstract»</FONT><BR/><I><B>Donation</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-amount: double<BR ALIGN="LEFT"/>-date: DateTime<BR ALIGN="LEFT"/>-donor: Donor<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Receipt [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«interface»</FONT><BR/><I><B>Receipt</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+render(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    BasicReceipt [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>BasicReceipt</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-donation: Donation<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+render(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    ReceiptDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«abstract»</FONT><BR/><I><B>ReceiptDecorator</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-wrapped: Receipt<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+render(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    TaxInfoDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>TaxInfoDecorator</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+render(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    ThankYouNoteDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>ThankYouNoteDecorator</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+render(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_EVT {
+    label=<<FONT POINT-SIZE="15" COLOR="#6f595d"><B>EVENTS | FACTORY + DECORATOR</B></FONT>>; fillcolor="#fdebef"; color="#f7c6d0"; margin=14;
+    EventService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>EventService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-observers: List&lt;Observer&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+createEvent(type: String, name: String, date: DateTime, venue: String): Event<BR ALIGN="LEFT"/>+changeDate(event: Event, newDate: DateTime): void<BR ALIGN="LEFT"/>+changeVenue(event: Event, newVenue: String): void<BR ALIGN="LEFT"/>+registerAttendee(event: Event, person: Person): void<BR ALIGN="LEFT"/>+markAttendance(event: Event, person: Person): void<BR ALIGN="LEFT"/>+sellTicket(event: Event, person: Person, extras: List&lt;String&gt;): Ticket<BR ALIGN="LEFT"/>+sendReminders(event: Event): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Event [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«abstract»</FONT><BR/><I><B>Event</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-name: String<BR ALIGN="LEFT"/>-date: DateTime<BR ALIGN="LEFT"/>-venue: String<BR ALIGN="LEFT"/>-status: EventStatus<BR ALIGN="LEFT"/>-attendees: List&lt;Person&gt;<BR ALIGN="LEFT"/>-attended: List&lt;Person&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/>+register(p: Person): void<BR ALIGN="LEFT"/>+markAttendance(p: Person): void<BR ALIGN="LEFT"/>+updateDate(newDate: DateTime): void<BR ALIGN="LEFT"/>+updateVenue(newVenue: String): void<BR ALIGN="LEFT"/>+setStatus(s: EventStatus): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Ticket [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«interface»</FONT><BR/><I><B>Ticket</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getPrice(): double<BR ALIGN="LEFT"/>+getDescription(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    BasicTicket [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>BasicTicket</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-basePrice: double<BR ALIGN="LEFT"/>-event: Event<BR ALIGN="LEFT"/>-holder: Person<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getPrice(): double<BR ALIGN="LEFT"/>+getDescription(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    TicketDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«abstract»</FONT><BR/><I><B>TicketDecorator</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-wrapped: Ticket<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getPrice(): double<BR ALIGN="LEFT"/>+getDescription(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    VipDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>VipDecorator</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getPrice(): double<BR ALIGN="LEFT"/>+getDescription(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    MealDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>MealDecorator</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getPrice(): double<BR ALIGN="LEFT"/>+getDescription(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_AID {
+    label=<<FONT POINT-SIZE="15" COLOR="#70634c"><B>BENEFICIARIES | STRATEGY</B></FONT>>; fillcolor="#fff3e0"; color="#f9ddaa"; margin=14;
+  }
+  subgraph cluster_VOL {
+    label=<<FONT POINT-SIZE="15" COLOR="#665c6c"><B>VOLUNTEERS</B></FONT>>; fillcolor="#f3e9fa"; color="#e3cdf2"; margin=14;
+  }
+  subgraph cluster_LOOK {
+    label=<<FONT POINT-SIZE="15" COLOR="#655b4c"><B>LOOKUP TABLES | CRUD</B></FONT>>; fillcolor="#f3efe8"; color="#e2d6c3"; margin=14;
+  }
+  subgraph cluster_VIEW {
+    label=<<FONT POINT-SIZE="15" COLOR="#5d6570"><B>VIEW | MVC</B></FONT>>; fillcolor="#eaf2ff"; color="#cfe2fb"; margin=14;
+  }
+  subgraph cluster_CTRL {
+    label=<<FONT POINT-SIZE="15" COLOR="#706154"><B>CONTROLLER | MVC</B></FONT>>; fillcolor="#fff1e5"; color="#fad9bc"; margin=14;
+  }
+  subgraph cluster_PERS {
+    label=<<FONT POINT-SIZE="15" COLOR="#5f6265"><B>PERSISTENCE | DAO + SINGLETON</B></FONT>>; fillcolor="#f0f2f5"; color="#d5dae2"; margin=14;
+  }
+  Receipt -> BasicReceipt [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  Receipt -> ReceiptDecorator [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  ReceiptDecorator -> Receipt [dir="both", arrowtail="odiamond", arrowhead="vee", color="#36425c", label="wrapped"];
+  ReceiptDecorator -> TaxInfoDecorator [dir="back", arrowtail="empty", color="#36425c"];
+  ReceiptDecorator -> ThankYouNoteDecorator [dir="back", arrowtail="empty", color="#36425c"];
+  BasicReceipt -> Donation [arrowhead="vee", color="#4d5b78", label="donation"];
+  DonationService -> Receipt [arrowhead="vee", color="#6b7690", style="dashed", label="builds"];
+  DonationService -> Donation [arrowhead="vee", color="#6b7690", style="dashed", label="records"];
+  DonationService -> BasicReceipt [arrowhead="vee", color="#6b7690", style="dashed", label="wraps"];
+  DonationService -> TaxInfoDecorator [arrowhead="vee", color="#6b7690", style="dashed", label="adds"];
+  DonationService -> ThankYouNoteDecorator [arrowhead="vee", color="#6b7690", style="dashed", label="adds"];
+  Ticket -> BasicTicket [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  Ticket -> TicketDecorator [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  TicketDecorator -> Ticket [dir="both", arrowtail="odiamond", arrowhead="vee", color="#36425c", label="wrapped"];
+  TicketDecorator -> VipDecorator [dir="back", arrowtail="empty", color="#36425c"];
+  TicketDecorator -> MealDecorator [dir="back", arrowtail="empty", color="#36425c"];
+  BasicTicket -> Event [arrowhead="vee", color="#4d5b78", label="event"];
+  EventService -> Ticket [arrowhead="vee", color="#6b7690", style="dashed", label="builds"];
+  EventService -> BasicTicket [arrowhead="vee", color="#6b7690", style="dashed", label="wraps"];
+  EventService -> VipDecorator [arrowhead="vee", color="#6b7690", style="dashed", label="adds"];
+  EventService -> MealDecorator [arrowhead="vee", color="#6b7690", style="dashed", label="adds"];
+  ReceiptObserver -> DonationService [arrowhead="vee", color="#6b7690", style="dashed", label="observes"];
+  Event -> Person [dir="back", arrowtail="odiamond", color="#36425c", label="attendees *"];
+  BasicTicket -> Person [arrowhead="vee", color="#4d5b78", label="holder"];
+  ReceiptObserver -> Receipt [arrowhead="vee", color="#6b7690", style="dashed", label="prints"];
+  ReceiptObserver -> Donation [arrowhead="vee", color="#6b7690", style="dashed", label="reads"];
+}

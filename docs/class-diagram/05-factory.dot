@@ -1,0 +1,74 @@
+digraph G {
+  graph [layout=dot, rankdir=LR, splines=true, overlap=false, compound=true, newrank=true,
+         nodesep=0.45, ranksep=1.1, remincross=true, mclimit=4, pad=0.5, bgcolor="#fcfbf8", fontname="Helvetica,sans-Serif",
+         labelloc=t, labeljust=l, style="rounded,filled", penwidth=2,
+         label=<<FONT POINT-SIZE="30" COLOR="#263147"><B>UML Class Diagram</B></FONT><BR ALIGN="LEFT"/><FONT POINT-SIZE="17" COLOR="#6a7489">Factory pattern - creating donations and events</FONT><BR ALIGN="LEFT"/> <BR ALIGN="LEFT"/>>];
+  node [shape=plain, fontname="Helvetica,sans-Serif", fontsize=11];
+  edge [fontname="Helvetica,sans-Serif", fontsize=10, fontcolor="#4a5468", penwidth=1.7, arrowsize=1.2];
+  subgraph cluster_OBS {
+    label=<<FONT POINT-SIZE="15" COLOR="#6f674a"><B>OBSERVERS | OBSERVER</B></FONT>>; fillcolor="#fff8dc"; color="#f7e7a6"; margin=14;
+  }
+  subgraph cluster_NOTI {
+    label=<<FONT POINT-SIZE="15" COLOR="#55676c"><B>NOTIFICATIONS | STRATEGY</B></FONT>>; fillcolor="#e6f6fa"; color="#bde5f0"; margin=14;
+  }
+  subgraph cluster_PEOPLE {
+    label=<<FONT POINT-SIZE="15" COLOR="#54675b"><B>PEOPLE</B></FONT>>; fillcolor="#e7f7ed"; color="#bce6cb"; margin=14;
+    Donor [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#92b39e"><TR><TD BGCOLOR="#bce6cb" STYLE="ROUNDED" CELLPADDING="4"><B>Donor</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-donorType: String<BR ALIGN="LEFT"/>-taxId: String<BR ALIGN="LEFT"/>-totalDonated: double<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_DON {
+    label=<<FONT POINT-SIZE="15" COLOR="#635e6d"><B>DONATIONS | FACTORY + DECORATOR</B></FONT>>; fillcolor="#f1ecfb"; color="#dcd1f4"; margin=14;
+    DonationService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>DonationService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-observers: List&lt;Observer&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+recordDonation(type: String, donor: Donor, amount: double): Donation<BR ALIGN="LEFT"/>+getDonationsByDonor(donor: Donor): List&lt;Donation&gt;<BR ALIGN="LEFT"/>+generateTaxStatement(donor: Donor, year: int): String<BR ALIGN="LEFT"/>+buildReceipt(donation: Donation, options: List&lt;String&gt;): Receipt<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    DonationFactory [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>DonationFactory</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><U>+create(type: String, donor: Donor, amount: double): Donation</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Donation [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«abstract»</FONT><BR/><I><B>Donation</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-amount: double<BR ALIGN="LEFT"/>-date: DateTime<BR ALIGN="LEFT"/>-donor: Donor<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    OnlineDonation [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>OnlineDonation</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-transactionId: String<BR ALIGN="LEFT"/>-gateway: String<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    CheckDonation [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>CheckDonation</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-checkNumber: String<BR ALIGN="LEFT"/>-bankName: String<BR ALIGN="LEFT"/>-clearingDate: DateTime<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    InKindDonation [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>InKindDonation</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-itemDescription: String<BR ALIGN="LEFT"/>-quantity: int<BR ALIGN="LEFT"/>-estimatedValue: double<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_EVT {
+    label=<<FONT POINT-SIZE="15" COLOR="#6f595d"><B>EVENTS | FACTORY + DECORATOR</B></FONT>>; fillcolor="#fdebef"; color="#f7c6d0"; margin=14;
+    EventService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>EventService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-observers: List&lt;Observer&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+createEvent(type: String, name: String, date: DateTime, venue: String): Event<BR ALIGN="LEFT"/>+changeDate(event: Event, newDate: DateTime): void<BR ALIGN="LEFT"/>+changeVenue(event: Event, newVenue: String): void<BR ALIGN="LEFT"/>+registerAttendee(event: Event, person: Person): void<BR ALIGN="LEFT"/>+markAttendance(event: Event, person: Person): void<BR ALIGN="LEFT"/>+sellTicket(event: Event, person: Person, extras: List&lt;String&gt;): Ticket<BR ALIGN="LEFT"/>+sendReminders(event: Event): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    EventFactory [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>EventFactory</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><U>+create(type: String, name: String, date: DateTime, venue: String): Event</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Event [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«abstract»</FONT><BR/><I><B>Event</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-name: String<BR ALIGN="LEFT"/>-date: DateTime<BR ALIGN="LEFT"/>-venue: String<BR ALIGN="LEFT"/>-status: EventStatus<BR ALIGN="LEFT"/>-attendees: List&lt;Person&gt;<BR ALIGN="LEFT"/>-attended: List&lt;Person&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/>+register(p: Person): void<BR ALIGN="LEFT"/>+markAttendance(p: Person): void<BR ALIGN="LEFT"/>+updateDate(newDate: DateTime): void<BR ALIGN="LEFT"/>+updateVenue(newVenue: String): void<BR ALIGN="LEFT"/>+setStatus(s: EventStatus): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Fundraiser [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>Fundraiser</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-targetAmount: double<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Workshop [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>Workshop</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-capacity: int<BR ALIGN="LEFT"/>-trainer: String<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Outreach [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>Outreach</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-location: String<BR ALIGN="LEFT"/>-teamSize: int<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+getType(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    EventStatus [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«enumeration»</FONT><BR/><B>EventStatus</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">PLANNED<BR ALIGN="LEFT"/>ONGOING<BR ALIGN="LEFT"/>COMPLETED<BR ALIGN="LEFT"/>CANCELLED<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_AID {
+    label=<<FONT POINT-SIZE="15" COLOR="#70634c"><B>BENEFICIARIES | STRATEGY</B></FONT>>; fillcolor="#fff3e0"; color="#f9ddaa"; margin=14;
+  }
+  subgraph cluster_VOL {
+    label=<<FONT POINT-SIZE="15" COLOR="#665c6c"><B>VOLUNTEERS</B></FONT>>; fillcolor="#f3e9fa"; color="#e3cdf2"; margin=14;
+  }
+  subgraph cluster_LOOK {
+    label=<<FONT POINT-SIZE="15" COLOR="#655b4c"><B>LOOKUP TABLES | CRUD</B></FONT>>; fillcolor="#f3efe8"; color="#e2d6c3"; margin=14;
+  }
+  subgraph cluster_VIEW {
+    label=<<FONT POINT-SIZE="15" COLOR="#5d6570"><B>VIEW | MVC</B></FONT>>; fillcolor="#eaf2ff"; color="#cfe2fb"; margin=14;
+  }
+  subgraph cluster_CTRL {
+    label=<<FONT POINT-SIZE="15" COLOR="#706154"><B>CONTROLLER | MVC</B></FONT>>; fillcolor="#fff1e5"; color="#fad9bc"; margin=14;
+  }
+  subgraph cluster_PERS {
+    label=<<FONT POINT-SIZE="15" COLOR="#5f6265"><B>PERSISTENCE | DAO + SINGLETON</B></FONT>>; fillcolor="#f0f2f5"; color="#d5dae2"; margin=14;
+  }
+  Donation -> OnlineDonation [dir="back", arrowtail="empty", color="#36425c"];
+  Donation -> CheckDonation [dir="back", arrowtail="empty", color="#36425c"];
+  Donation -> InKindDonation [dir="back", arrowtail="empty", color="#36425c"];
+  DonationFactory -> Donation [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  DonationService -> DonationFactory [arrowhead="vee", color="#6b7690", style="dashed"];
+  DonationService -> Donation [arrowhead="vee", color="#6b7690", style="dashed", label="records"];
+  DonationFactory -> OnlineDonation [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  DonationFactory -> CheckDonation [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  DonationFactory -> InKindDonation [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  Event -> Fundraiser [dir="back", arrowtail="empty", color="#36425c"];
+  Event -> Workshop [dir="back", arrowtail="empty", color="#36425c"];
+  Event -> Outreach [dir="back", arrowtail="empty", color="#36425c"];
+  EventFactory -> Event [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  EventService -> EventFactory [arrowhead="vee", color="#6b7690", style="dashed"];
+  Event -> EventStatus [arrowhead="vee", color="#4d5b78", label="status"];
+  EventFactory -> Fundraiser [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  EventFactory -> Workshop [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  EventFactory -> Outreach [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  Donation -> Donor [arrowhead="vee", color="#4d5b78", label="donor"];
+}

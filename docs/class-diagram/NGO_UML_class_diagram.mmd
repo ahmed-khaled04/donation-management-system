@@ -617,6 +617,9 @@ direction TB
     Person <|-- Volunteer
     Person <|-- Beneficiary
     PersonService ..> Person : manages
+    PersonService ..> Donor : creates
+    PersonService ..> Volunteer : creates
+    PersonService ..> Beneficiary : creates
 
     %% ----- relationships: DONATIONS (Factory + Decorator) -----
     Donation <|-- OnlineDonation
@@ -632,6 +635,12 @@ direction TB
     BasicReceipt --> Donation : donation
     DonationService ..> Receipt : builds
     DonationService ..> Donation : records
+    DonationFactory ..> OnlineDonation : creates
+    DonationFactory ..> CheckDonation : creates
+    DonationFactory ..> InKindDonation : creates
+    DonationService ..> BasicReceipt : wraps
+    DonationService ..> TaxInfoDecorator : adds
+    DonationService ..> ThankYouNoteDecorator : adds
 
     %% ----- relationships: EVENTS (Factory + Decorator) -----
     Event <|-- Fundraiser
@@ -647,6 +656,12 @@ direction TB
     BasicTicket --> Event : event
     EventService ..> Ticket : builds
     Event --> EventStatus : status
+    EventFactory ..> Fundraiser : creates
+    EventFactory ..> Workshop : creates
+    EventFactory ..> Outreach : creates
+    EventService ..> BasicTicket : wraps
+    EventService ..> VipDecorator : adds
+    EventService ..> MealDecorator : adds
 
     %% ----- relationships: BENEFICIARIES (Strategy) -----
     Distribution --> Resource : resource
@@ -658,6 +673,8 @@ direction TB
     ImpactEvaluator ..> Distribution : scores
     ImpactEvaluator ..> ImpactReport
     ImpactEvaluationStrategy ..> ImpactReport
+    DistributionService ..> FoodAidImpactStrategy : picks
+    DistributionService ..> EducationImpactStrategy : picks
 
     %% ----- relationships: VOLUNTEERS -----
     VolunteerService ..> Skill
@@ -688,6 +705,11 @@ direction TB
     PersonView "1" -- "1" PersonController
     LookupView "1" -- "1" LookupController
     LookupController ..> GenericDAO : CRUD
+    LookupView ..> Skill : shows
+    LookupView ..> ResourceCategory : shows
+    EventController ..> GenericDAO : finds by id
+    VolunteerController ..> GenericDAO : finds by id
+    BeneficiaryController ..> GenericDAO : finds by id
     Need --> ResourceCategory : category
     Resource --> ResourceCategory : category
     DonationController --> DonationService
@@ -731,6 +753,10 @@ direction TB
     EventService ..> ChangeEvent : raises
     DistributionService ..> ChangeEvent : raises
     AttendeeNotificationObserver ..> Message
+    ThankYouObserver ..> Message
+    ReceiptObserver ..> Donation : reads
+    StatsObserver ..> Donation : reads
+    ThankYouObserver ..> Donation : reads
     DonationController ..> PersonService : finds person
     EventController ..> PersonService : finds person
     BeneficiaryController ..> PersonService : finds person

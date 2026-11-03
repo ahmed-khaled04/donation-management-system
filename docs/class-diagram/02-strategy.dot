@@ -1,0 +1,82 @@
+digraph G {
+  graph [layout=dot, rankdir=LR, splines=true, overlap=false, compound=true, newrank=true,
+         nodesep=0.45, ranksep=1.1, remincross=true, mclimit=4, pad=0.5, bgcolor="#fcfbf8", fontname="Helvetica,sans-Serif",
+         labelloc=t, labeljust=l, style="rounded,filled", penwidth=2,
+         label=<<FONT POINT-SIZE="30" COLOR="#263147"><B>UML Class Diagram</B></FONT><BR ALIGN="LEFT"/><FONT POINT-SIZE="17" COLOR="#6a7489">Strategy pattern - notification channels and impact evaluation</FONT><BR ALIGN="LEFT"/> <BR ALIGN="LEFT"/>>];
+  node [shape=plain, fontname="Helvetica,sans-Serif", fontsize=11];
+  edge [fontname="Helvetica,sans-Serif", fontsize=10, fontcolor="#4a5468", penwidth=1.7, arrowsize=1.2];
+  subgraph cluster_OBS {
+    label=<<FONT POINT-SIZE="15" COLOR="#6f674a"><B>OBSERVERS | OBSERVER</B></FONT>>; fillcolor="#fff8dc"; color="#f7e7a6"; margin=14;
+    ThankYouObserver [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c0b481"><TR><TD BGCOLOR="#f7e7a6" STYLE="ROUNDED" CELLPADDING="4"><B>ThankYouObserver</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-notificationService: NotificationService<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+update(source: Subject, change: ChangeEvent): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    AttendeeNotificationObserver [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c0b481"><TR><TD BGCOLOR="#f7e7a6" STYLE="ROUNDED" CELLPADDING="4"><B>AttendeeNotificationObserver</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-notificationService: NotificationService<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+update(source: Subject, change: ChangeEvent): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_NOTI {
+    label=<<FONT POINT-SIZE="15" COLOR="#55676c"><B>NOTIFICATIONS | STRATEGY</B></FONT>>; fillcolor="#e6f6fa"; color="#bde5f0"; margin=14;
+    NotificationService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#93b2bb"><TR><TD BGCOLOR="#bde5f0" STYLE="ROUNDED" CELLPADDING="4"><B>NotificationService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-strategies: Map&lt;Channel, NotificationStrategy&gt;<BR ALIGN="LEFT"/>-strategy: NotificationStrategy<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+registerStrategy(c: Channel, s: NotificationStrategy): void<BR ALIGN="LEFT"/>+setStrategy(s: NotificationStrategy): void<BR ALIGN="LEFT"/>+sendNotification(to: Person, msg: Message): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    NotificationStrategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#93b2bb"><TR><TD BGCOLOR="#bde5f0" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«interface»</FONT><BR/><I><B>NotificationStrategy</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+send(to: Person, msg: Message): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    EmailStrategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#93b2bb"><TR><TD BGCOLOR="#bde5f0" STYLE="ROUNDED" CELLPADDING="4"><B>EmailStrategy</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+send(to: Person, msg: Message): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    SmsStrategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#93b2bb"><TR><TD BGCOLOR="#bde5f0" STYLE="ROUNDED" CELLPADDING="4"><B>SmsStrategy</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+send(to: Person, msg: Message): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    SocialMediaStrategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#93b2bb"><TR><TD BGCOLOR="#bde5f0" STYLE="ROUNDED" CELLPADDING="4"><B>SocialMediaStrategy</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+send(to: Person, msg: Message): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Channel [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#93b2bb"><TR><TD BGCOLOR="#bde5f0" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«enumeration»</FONT><BR/><B>Channel</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">EMAIL<BR ALIGN="LEFT"/>SMS<BR ALIGN="LEFT"/>SOCIAL<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Message [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#93b2bb"><TR><TD BGCOLOR="#bde5f0" STYLE="ROUNDED" CELLPADDING="4"><B>Message</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-subject: String<BR ALIGN="LEFT"/>-body: String<BR ALIGN="LEFT"/>-createdAt: DateTime<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_PEOPLE {
+    label=<<FONT POINT-SIZE="15" COLOR="#54675b"><B>PEOPLE</B></FONT>>; fillcolor="#e7f7ed"; color="#bce6cb"; margin=14;
+    Person [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#92b39e"><TR><TD BGCOLOR="#bce6cb" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«abstract»</FONT><BR/><I><B>Person</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-name: String<BR ALIGN="LEFT"/>-email: String<BR ALIGN="LEFT"/>-phone: String<BR ALIGN="LEFT"/>-socialHandle: String<BR ALIGN="LEFT"/>-preferredChannel: Channel<BR ALIGN="LEFT"/>-passwordHash: String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_DON {
+    label=<<FONT POINT-SIZE="15" COLOR="#635e6d"><B>DONATIONS | FACTORY + DECORATOR</B></FONT>>; fillcolor="#f1ecfb"; color="#dcd1f4"; margin=14;
+  }
+  subgraph cluster_EVT {
+    label=<<FONT POINT-SIZE="15" COLOR="#6f595d"><B>EVENTS | FACTORY + DECORATOR</B></FONT>>; fillcolor="#fdebef"; color="#f7c6d0"; margin=14;
+  }
+  subgraph cluster_AID {
+    label=<<FONT POINT-SIZE="15" COLOR="#70634c"><B>BENEFICIARIES | STRATEGY</B></FONT>>; fillcolor="#fff3e0"; color="#f9ddaa"; margin=14;
+    DistributionService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>DistributionService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-observers: List&lt;Observer&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+recordDistribution(b: Beneficiary, r: Resource, quantity: int): Distribution<BR ALIGN="LEFT"/>+getDistributionsByBeneficiary(b: Beneficiary): List&lt;Distribution&gt;<BR ALIGN="LEFT"/>+evaluateImpact(programType: String): ImpactReport<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Distribution [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>Distribution</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-date: DateTime<BR ALIGN="LEFT"/>-beneficiary: Beneficiary<BR ALIGN="LEFT"/>-resource: Resource<BR ALIGN="LEFT"/>-quantity: int<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    ImpactEvaluator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>ImpactEvaluator</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-strategy: ImpactEvaluationStrategy<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+setStrategy(s: ImpactEvaluationStrategy): void<BR ALIGN="LEFT"/>+evaluate(distributions: List&lt;Distribution&gt;): ImpactReport<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    ImpactEvaluationStrategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«interface»</FONT><BR/><I><B>ImpactEvaluationStrategy</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+evaluate(distributions: List&lt;Distribution&gt;): ImpactReport<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    FoodAidImpactStrategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>FoodAidImpactStrategy</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+evaluate(distributions: List&lt;Distribution&gt;): ImpactReport<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    EducationImpactStrategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>EducationImpactStrategy</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+evaluate(distributions: List&lt;Distribution&gt;): ImpactReport<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    ImpactReport [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>ImpactReport</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-programName: String<BR ALIGN="LEFT"/>-score: double<BR ALIGN="LEFT"/>-summary: String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_VOL {
+    label=<<FONT POINT-SIZE="15" COLOR="#665c6c"><B>VOLUNTEERS</B></FONT>>; fillcolor="#f3e9fa"; color="#e3cdf2"; margin=14;
+  }
+  subgraph cluster_LOOK {
+    label=<<FONT POINT-SIZE="15" COLOR="#655b4c"><B>LOOKUP TABLES | CRUD</B></FONT>>; fillcolor="#f3efe8"; color="#e2d6c3"; margin=14;
+  }
+  subgraph cluster_VIEW {
+    label=<<FONT POINT-SIZE="15" COLOR="#5d6570"><B>VIEW | MVC</B></FONT>>; fillcolor="#eaf2ff"; color="#cfe2fb"; margin=14;
+  }
+  subgraph cluster_CTRL {
+    label=<<FONT POINT-SIZE="15" COLOR="#706154"><B>CONTROLLER | MVC</B></FONT>>; fillcolor="#fff1e5"; color="#fad9bc"; margin=14;
+    BeneficiaryController [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c3a992"><TR><TD BGCOLOR="#fad9bc" STYLE="ROUNDED" CELLPADDING="4"><B>BeneficiaryController</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+loadBeneficiaries(): void<BR ALIGN="LEFT"/>+recordDistribution(beneficiaryId: int, resourceId: int, quantity: int): void<BR ALIGN="LEFT"/>+showImpact(programType: String): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_PERS {
+    label=<<FONT POINT-SIZE="15" COLOR="#5f6265"><B>PERSISTENCE | DAO + SINGLETON</B></FONT>>; fillcolor="#f0f2f5"; color="#d5dae2"; margin=14;
+  }
+  NotificationStrategy -> EmailStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  NotificationStrategy -> SmsStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  NotificationStrategy -> SocialMediaStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  NotificationService -> NotificationStrategy [arrowhead="vee", color="#4d5b78", label="strategies"];
+  NotificationService -> Message [arrowhead="vee", color="#6b7690", style="dashed"];
+  DistributionService -> Distribution [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  ImpactEvaluationStrategy -> FoodAidImpactStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  ImpactEvaluationStrategy -> EducationImpactStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  ImpactEvaluator -> ImpactEvaluationStrategy [arrowhead="vee", color="#4d5b78", label="strategy"];
+  DistributionService -> ImpactEvaluator [arrowhead="vee", color="#4d5b78", label="picks strategy"];
+  ImpactEvaluator -> Distribution [arrowhead="vee", color="#6b7690", style="dashed", label="scores"];
+  ImpactEvaluator -> ImpactReport [arrowhead="vee", color="#6b7690", style="dashed"];
+  ImpactEvaluationStrategy -> ImpactReport [arrowhead="vee", color="#6b7690", style="dashed"];
+  DistributionService -> FoodAidImpactStrategy [arrowhead="vee", color="#6b7690", style="dashed", label="picks"];
+  DistributionService -> EducationImpactStrategy [arrowhead="vee", color="#6b7690", style="dashed", label="picks"];
+  BeneficiaryController -> DistributionService [arrowhead="vee", color="#4d5b78"];
+  ThankYouObserver -> NotificationService [arrowhead="vee", color="#4d5b78", label="thank you"];
+  AttendeeNotificationObserver -> NotificationService [arrowhead="vee", color="#4d5b78", label="updates"];
+  Person -> Channel [arrowhead="vee", color="#4d5b78", label="preferredChannel"];
+  AttendeeNotificationObserver -> Person [arrowhead="vee", color="#6b7690", style="dashed", label="notifies"];
+  NotificationService -> Person [arrowhead="vee", color="#6b7690", style="dashed", label="sends to"];
+  AttendeeNotificationObserver -> Message [arrowhead="vee", color="#6b7690", style="dashed"];
+  ThankYouObserver -> Message [arrowhead="vee", color="#6b7690", style="dashed"];
+}

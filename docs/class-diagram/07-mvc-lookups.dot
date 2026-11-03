@@ -1,0 +1,105 @@
+digraph G {
+  graph [layout=dot, rankdir=LR, splines=true, overlap=false, compound=true, newrank=true,
+         nodesep=0.45, ranksep=1.1, remincross=true, mclimit=4, pad=0.5, bgcolor="#fcfbf8", fontname="Helvetica,sans-Serif",
+         labelloc=t, labeljust=l, style="rounded,filled", penwidth=2,
+         label=<<FONT POINT-SIZE="30" COLOR="#263147"><B>UML Class Diagram</B></FONT><BR ALIGN="LEFT"/><FONT POINT-SIZE="17" COLOR="#6a7489">MVC architecture and CRUD lookup tables</FONT><BR ALIGN="LEFT"/> <BR ALIGN="LEFT"/>>];
+  node [shape=plain, fontname="Helvetica,sans-Serif", fontsize=11];
+  edge [fontname="Helvetica,sans-Serif", fontsize=10, fontcolor="#4a5468", penwidth=1.7, arrowsize=1.2];
+  subgraph cluster_OBS {
+    label=<<FONT POINT-SIZE="15" COLOR="#6f674a"><B>OBSERVERS | OBSERVER</B></FONT>>; fillcolor="#fff8dc"; color="#f7e7a6"; margin=14;
+  }
+  subgraph cluster_NOTI {
+    label=<<FONT POINT-SIZE="15" COLOR="#55676c"><B>NOTIFICATIONS | STRATEGY</B></FONT>>; fillcolor="#e6f6fa"; color="#bde5f0"; margin=14;
+  }
+  subgraph cluster_PEOPLE {
+    label=<<FONT POINT-SIZE="15" COLOR="#54675b"><B>PEOPLE</B></FONT>>; fillcolor="#e7f7ed"; color="#bce6cb"; margin=14;
+    Volunteer [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#92b39e"><TR><TD BGCOLOR="#bce6cb" STYLE="ROUNDED" CELLPADDING="4"><B>Volunteer</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-skills: List&lt;Skill&gt;<BR ALIGN="LEFT"/>-availability: List&lt;String&gt;<BR ALIGN="LEFT"/>-totalHours: double<BR ALIGN="LEFT"/>-preferences: List&lt;String&gt;<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    PersonService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#92b39e"><TR><TD BGCOLOR="#bce6cb" STYLE="ROUNDED" CELLPADDING="4"><B>PersonService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+register(type: String, name: String, email: String, phone: String, password: String): Person<BR ALIGN="LEFT"/>+authenticate(email: String, password: String): Person<BR ALIGN="LEFT"/>+findById(id: int): Person<BR ALIGN="LEFT"/>+searchByName(name: String): List&lt;Person&gt;<BR ALIGN="LEFT"/>+update(p: Person): void<BR ALIGN="LEFT"/>+delete(id: int): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_DON {
+    label=<<FONT POINT-SIZE="15" COLOR="#635e6d"><B>DONATIONS | FACTORY + DECORATOR</B></FONT>>; fillcolor="#f1ecfb"; color="#dcd1f4"; margin=14;
+    DonationService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#aba3be"><TR><TD BGCOLOR="#dcd1f4" STYLE="ROUNDED" CELLPADDING="4"><B>DonationService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-observers: List&lt;Observer&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+recordDonation(type: String, donor: Donor, amount: double): Donation<BR ALIGN="LEFT"/>+getDonationsByDonor(donor: Donor): List&lt;Donation&gt;<BR ALIGN="LEFT"/>+generateTaxStatement(donor: Donor, year: int): String<BR ALIGN="LEFT"/>+buildReceipt(donation: Donation, options: List&lt;String&gt;): Receipt<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_EVT {
+    label=<<FONT POINT-SIZE="15" COLOR="#6f595d"><B>EVENTS | FACTORY + DECORATOR</B></FONT>>; fillcolor="#fdebef"; color="#f7c6d0"; margin=14;
+    EventService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c09aa2"><TR><TD BGCOLOR="#f7c6d0" STYLE="ROUNDED" CELLPADDING="4"><B>EventService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-observers: List&lt;Observer&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+createEvent(type: String, name: String, date: DateTime, venue: String): Event<BR ALIGN="LEFT"/>+changeDate(event: Event, newDate: DateTime): void<BR ALIGN="LEFT"/>+changeVenue(event: Event, newVenue: String): void<BR ALIGN="LEFT"/>+registerAttendee(event: Event, person: Person): void<BR ALIGN="LEFT"/>+markAttendance(event: Event, person: Person): void<BR ALIGN="LEFT"/>+sellTicket(event: Event, person: Person, extras: List&lt;String&gt;): Ticket<BR ALIGN="LEFT"/>+sendReminders(event: Event): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_AID {
+    label=<<FONT POINT-SIZE="15" COLOR="#70634c"><B>BENEFICIARIES | STRATEGY</B></FONT>>; fillcolor="#fff3e0"; color="#f9ddaa"; margin=14;
+    DistributionService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>DistributionService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-observers: List&lt;Observer&gt;<BR ALIGN="LEFT"/></TD></TR><HR/><TR><TD ALIGN="LEFT" BALIGN="LEFT">+recordDistribution(b: Beneficiary, r: Resource, quantity: int): Distribution<BR ALIGN="LEFT"/>+getDistributionsByBeneficiary(b: Beneficiary): List&lt;Distribution&gt;<BR ALIGN="LEFT"/>+evaluateImpact(programType: String): ImpactReport<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Resource [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>Resource</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-name: String<BR ALIGN="LEFT"/>-unit: String<BR ALIGN="LEFT"/>-stockQuantity: int<BR ALIGN="LEFT"/>-category: ResourceCategory<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    Need [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c2ac84"><TR><TD BGCOLOR="#f9ddaa" STYLE="ROUNDED" CELLPADDING="4"><B>Need</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-category: ResourceCategory<BR ALIGN="LEFT"/>-description: String<BR ALIGN="LEFT"/>-priority: int<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_VOL {
+    label=<<FONT POINT-SIZE="15" COLOR="#665c6c"><B>VOLUNTEERS</B></FONT>>; fillcolor="#f3e9fa"; color="#e3cdf2"; margin=14;
+    VolunteerService [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#b19fbc"><TR><TD BGCOLOR="#e3cdf2" STYLE="ROUNDED" CELLPADDING="4"><B>VolunteerService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+assign(v: Volunteer, e: Event, role: String): Assignment<BR ALIGN="LEFT"/>+logHours(a: Assignment, hours: double): void<BR ALIGN="LEFT"/>+findBySkill(skill: Skill): List&lt;Volunteer&gt;<BR ALIGN="LEFT"/>+getAssignmentsByEvent(e: Event): List&lt;Assignment&gt;<BR ALIGN="LEFT"/>+generateCertificate(v: Volunteer): VolunteerCertificate<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_LOOK {
+    label=<<FONT POINT-SIZE="15" COLOR="#655b4c"><B>LOOKUP TABLES | CRUD</B></FONT>>; fillcolor="#f3efe8"; color="#e2d6c3"; margin=14;
+    Skill [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#b3a58e"><TR><TD BGCOLOR="#e2d6c3" STYLE="ROUNDED" CELLPADDING="4"><B>Skill</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-name: String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    ResourceCategory [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#b3a58e"><TR><TD BGCOLOR="#e2d6c3" STYLE="ROUNDED" CELLPADDING="4"><B>ResourceCategory</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">-id: int<BR ALIGN="LEFT"/>-name: String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_VIEW {
+    label=<<FONT POINT-SIZE="15" COLOR="#5d6570"><B>VIEW | MVC</B></FONT>>; fillcolor="#eaf2ff"; color="#cfe2fb"; margin=14;
+    View [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#a1b0c3"><TR><TD BGCOLOR="#cfe2fb" STYLE="ROUNDED" CELLPADDING="4"><FONT POINT-SIZE="9" COLOR="#55607a">«interface»</FONT><BR/><I><B>View</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+show(): void<BR ALIGN="LEFT"/>+showMessage(msg: String): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    DonationView [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#a1b0c3"><TR><TD BGCOLOR="#cfe2fb" STYLE="ROUNDED" CELLPADDING="4"><B>DonationView</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+showDonationList(list): void<BR ALIGN="LEFT"/>+showReceipt(text): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    EventView [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#a1b0c3"><TR><TD BGCOLOR="#cfe2fb" STYLE="ROUNDED" CELLPADDING="4"><B>EventView</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+showEventList(list): void<BR ALIGN="LEFT"/>+showTicket(ticket): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    BeneficiaryView [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#a1b0c3"><TR><TD BGCOLOR="#cfe2fb" STYLE="ROUNDED" CELLPADDING="4"><B>BeneficiaryView</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+showDistributions(list): void<BR ALIGN="LEFT"/>+showImpact(score): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    VolunteerView [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#a1b0c3"><TR><TD BGCOLOR="#cfe2fb" STYLE="ROUNDED" CELLPADDING="4"><B>VolunteerView</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+showAssignments(list): void<BR ALIGN="LEFT"/>+showCertificate(text): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    PersonView [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#a1b0c3"><TR><TD BGCOLOR="#cfe2fb" STYLE="ROUNDED" CELLPADDING="4"><B>PersonView</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+showLoginForm(): void<BR ALIGN="LEFT"/>+showSignupForm(): void<BR ALIGN="LEFT"/>+showProfile(p: Person): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    LookupView [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#a1b0c3"><TR><TD BGCOLOR="#cfe2fb" STYLE="ROUNDED" CELLPADDING="4"><B>LookupView</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+showTable(items: List): void<BR ALIGN="LEFT"/>+showItemForm(): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_CTRL {
+    label=<<FONT POINT-SIZE="15" COLOR="#706154"><B>CONTROLLER | MVC</B></FONT>>; fillcolor="#fff1e5"; color="#fad9bc"; margin=14;
+    DonationController [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c3a992"><TR><TD BGCOLOR="#fad9bc" STYLE="ROUNDED" CELLPADDING="4"><B>DonationController</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+loadDonations(): void<BR ALIGN="LEFT"/>+submitDonation(type: String, donorId: int, amount: double): void<BR ALIGN="LEFT"/>+generateReceipt(donationId: int, options: List&lt;String&gt;): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    EventController [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c3a992"><TR><TD BGCOLOR="#fad9bc" STYLE="ROUNDED" CELLPADDING="4"><B>EventController</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+loadEvents(): void<BR ALIGN="LEFT"/>+createEvent(type: String, name: String, date: DateTime, venue: String): void<BR ALIGN="LEFT"/>+changeDate(eventId: int, newDate: DateTime): void<BR ALIGN="LEFT"/>+registerAttendee(eventId: int, personId: int): void<BR ALIGN="LEFT"/>+sellTicket(eventId: int, personId: int, extras: List&lt;String&gt;): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    BeneficiaryController [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c3a992"><TR><TD BGCOLOR="#fad9bc" STYLE="ROUNDED" CELLPADDING="4"><B>BeneficiaryController</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+loadBeneficiaries(): void<BR ALIGN="LEFT"/>+recordDistribution(beneficiaryId: int, resourceId: int, quantity: int): void<BR ALIGN="LEFT"/>+showImpact(programType: String): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    VolunteerController [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c3a992"><TR><TD BGCOLOR="#fad9bc" STYLE="ROUNDED" CELLPADDING="4"><B>VolunteerController</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+loadVolunteers(): void<BR ALIGN="LEFT"/>+assign(volunteerId: int, eventId: int, role: String): void<BR ALIGN="LEFT"/>+logHours(assignmentId: int, hours: double): void<BR ALIGN="LEFT"/>+issueCertificate(volunteerId: int): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    PersonController [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c3a992"><TR><TD BGCOLOR="#fad9bc" STYLE="ROUNDED" CELLPADDING="4"><B>PersonController</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+signup(type: String, name: String, email: String, phone: String, password: String): void<BR ALIGN="LEFT"/>+login(email: String, password: String): void<BR ALIGN="LEFT"/>+search(name: String): void<BR ALIGN="LEFT"/>+deletePerson(id: int): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+    LookupController [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#c3a992"><TR><TD BGCOLOR="#fad9bc" STYLE="ROUNDED" CELLPADDING="4"><B>LookupController</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+loadTable(table: String): void<BR ALIGN="LEFT"/>+createItem(table: String, name: String): void<BR ALIGN="LEFT"/>+updateItem(table: String, id: int, name: String): void<BR ALIGN="LEFT"/>+deleteItem(table: String, id: int): void<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_PERS {
+    label=<<FONT POINT-SIZE="15" COLOR="#5f6265"><B>PERSISTENCE | DAO + SINGLETON</B></FONT>>; fillcolor="#f0f2f5"; color="#d5dae2"; margin=14;
+    GenericDAO [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="1" CELLPADDING="3" STYLE="ROUNDED" BGCOLOR="white" COLOR="#a6aab0"><TR><TD BGCOLOR="#d5dae2" STYLE="ROUNDED" CELLPADDING="4"><B>GenericDAO&lt;T&gt;</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+insert(item: T): int<BR ALIGN="LEFT"/>+findById(id: int): T<BR ALIGN="LEFT"/>+findAll(): List&lt;T&gt;<BR ALIGN="LEFT"/>+update(item: T): void<BR ALIGN="LEFT"/>+delete(id: int): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  PersonService -> Volunteer [arrowhead="vee", color="#6b7690", style="dashed", label="creates"];
+  VolunteerService -> Skill [arrowhead="vee", color="#6b7690", style="dashed"];
+  View -> DonationView [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  View -> EventView [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  View -> BeneficiaryView [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  View -> VolunteerView [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  View -> PersonView [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  View -> LookupView [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
+  LookupController -> Skill [arrowhead="vee", color="#6b7690", style="dashed", label="manages"];
+  LookupController -> ResourceCategory [arrowhead="vee", color="#6b7690", style="dashed", label="manages"];
+  DonationView -> DonationController [arrowhead="none", color="#4d5b78"];
+  EventView -> EventController [arrowhead="none", color="#4d5b78"];
+  BeneficiaryView -> BeneficiaryController [arrowhead="none", color="#4d5b78"];
+  VolunteerView -> VolunteerController [arrowhead="none", color="#4d5b78"];
+  PersonView -> PersonController [arrowhead="none", color="#4d5b78"];
+  LookupView -> LookupController [arrowhead="none", color="#4d5b78"];
+  LookupController -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="CRUD"];
+  LookupView -> Skill [arrowhead="vee", color="#6b7690", style="dashed", label="shows"];
+  LookupView -> ResourceCategory [arrowhead="vee", color="#6b7690", style="dashed", label="shows"];
+  EventController -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="finds by id"];
+  VolunteerController -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="finds by id"];
+  BeneficiaryController -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="finds by id"];
+  Need -> ResourceCategory [arrowhead="vee", color="#4d5b78", label="category"];
+  Resource -> ResourceCategory [arrowhead="vee", color="#4d5b78", label="category"];
+  DonationController -> DonationService [arrowhead="vee", color="#4d5b78"];
+  EventController -> EventService [arrowhead="vee", color="#4d5b78"];
+  BeneficiaryController -> DistributionService [arrowhead="vee", color="#4d5b78"];
+  VolunteerController -> VolunteerService [arrowhead="vee", color="#4d5b78"];
+  PersonController -> PersonService [arrowhead="vee", color="#4d5b78"];
+  Volunteer -> Skill [arrowhead="vee", color="#4d5b78", label="skills"];
+  DonationService -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="stores data"];
+  EventService -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="stores data"];
+  DistributionService -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="stores data"];
+  VolunteerService -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="stores data"];
+  PersonService -> GenericDAO [arrowhead="vee", color="#6b7690", style="dashed", label="stores data"];
+  VolunteerService -> Volunteer [arrowhead="vee", color="#6b7690", style="dashed", label="finds"];
+  DonationController -> PersonService [arrowhead="vee", color="#6b7690", style="dashed", label="finds person"];
+  EventController -> PersonService [arrowhead="vee", color="#6b7690", style="dashed", label="finds person"];
+  BeneficiaryController -> PersonService [arrowhead="vee", color="#6b7690", style="dashed", label="finds person"];
+  VolunteerController -> PersonService [arrowhead="vee", color="#6b7690", style="dashed", label="finds person"];
+}
