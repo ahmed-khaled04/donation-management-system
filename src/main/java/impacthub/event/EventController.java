@@ -25,12 +25,12 @@ public class EventController {
     }
 
     public void createEvent(String type, String name, LocalDateTime date, String venue) {
-        if (name.isEmpty() || venue.isEmpty()) {
-            view.showMessage("Name and venue are required.");
-            return;
+        try {
+            Event e = eventService.createEvent(type, name, date, venue);
+            view.showMessage("Created " + e.getType() + " #" + e.getId() + ": " + e.getName() + ".");
+        } catch (IllegalArgumentException ex) {
+            view.showMessage(ex.getMessage());
         }
-        Event e = eventService.createEvent(type, name, date, venue);
-        view.showMessage("Created " + e.getType() + " #" + e.getId() + ": " + e.getName() + ".");
     }
 
     public void changeDate(int eventId, LocalDateTime newDate) {
@@ -39,8 +39,12 @@ public class EventController {
             view.showMessage("No event with id " + eventId + ".");
             return;
         }
-        eventService.changeDate(e, newDate);
-        view.showMessage(e.getName() + " moved to " + newDate + ". " + e.getAttendees().size() + " attendee(s) notified.");
+        try {
+            eventService.changeDate(e, newDate);
+            view.showMessage(e.getName() + " moved to " + newDate + ". " + e.getAttendees().size() + " attendee(s) notified.");
+        } catch (IllegalArgumentException ex) {
+            view.showMessage(ex.getMessage());
+        }
     }
 
     public void registerAttendee(int eventId, int personId) {
@@ -50,8 +54,12 @@ public class EventController {
             view.showMessage("Check the event id and person id.");
             return;
         }
-        eventService.registerAttendee(e, p);
-        view.showMessage(p.getName() + " is registered for " + e.getName() + ".");
+        try {
+            eventService.registerAttendee(e, p);
+            view.showMessage(p.getName() + " is registered for " + e.getName() + ".");
+        } catch (IllegalArgumentException ex) {
+            view.showMessage(ex.getMessage());
+        }
     }
 
     public void sellTicket(int eventId, int personId, List<String> extras) {
@@ -61,7 +69,11 @@ public class EventController {
             view.showMessage("Check the event id and person id.");
             return;
         }
-        view.showTicket(eventService.sellTicket(e, p, extras));
+        try {
+            view.showTicket(eventService.sellTicket(e, p, extras));
+        } catch (IllegalArgumentException ex) {
+            view.showMessage(ex.getMessage());
+        }
     }
 
     public void loadTickets(int eventId) {

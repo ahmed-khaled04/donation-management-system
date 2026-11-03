@@ -26,7 +26,8 @@ public class DistributionService implements Subject {
         }
         Distribution d = new Distribution(b, r, quantity);
         distributions.insert(d);
-        notifyObservers(new ChangeEvent("DISTRIBUTION_RECORDED", d));
+        notifyObservers(new ChangeEvent("DISTRIBUTION_RECORDED", d,
+                "Gave " + quantity + " " + r.getUnit() + " of " + r.getName() + " to " + b.getName()));
         resources.update(d.getResource()); // save the stock reduced by StockObserver
         return d;
     }

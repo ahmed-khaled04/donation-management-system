@@ -1,6 +1,7 @@
 package impacthub.lookup;
 
 import impacthub.View;
+import impacthub.observer.Observer;
 import impacthub.people.Skill;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -19,6 +20,11 @@ public class LookupView implements View {
     private final LookupController controller = new LookupController(this);
     private final VBox form = new VBox(6);
     private final TextArea output = new TextArea();
+
+    /** Lets the activity log follow what is done in this window. */
+    public void addObserver(Observer o) {
+        controller.addObserver(o);
+    }
 
     @Override
     public void show() {

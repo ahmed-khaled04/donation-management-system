@@ -1,5 +1,6 @@
 package impacthub.event;
 
+import impacthub.Validation;
 import impacthub.event.ticket.BasicTicket;
 import impacthub.event.ticket.MealDecorator;
 import impacthub.event.ticket.Ticket;
@@ -23,36 +24,59 @@ public class EventService implements Subject {
     private final GenericDAO<Ticket> tickets = new GenericDAO<>(Ticket.class);
 
     public Event createEvent(String type, String name, LocalDateTime date, String venue) {
-        Event event = EventFactory.create(type, name, date, venue);
+        String cleanName = Validation.requireText(name, "The event name");
+        String cleanVenue = Validation.requireText(venue, "The venue");
+        Validation.requireFutureDate(date);
+        Event event = EventFactory.create(type, cleanName, date, cleanVenue);
         events.insert(event);
+        notifyObservers(new ChangeEvent("EVENT_CREATED", event,
+                "Created " + event.getType() + " #" + event.getId() + " \"" + cleanName + "\""));
         return event;
     }
 
     public void changeDate(Event event, LocalDateTime newDate) {
+        Validation.requireFutureDate(newDate);
         event.updateDate(newDate);
         events.update(event);
-        notifyObservers(new ChangeEvent("EVENT_DATE_CHANGED", event));
+        notifyObservers(new ChangeEvent("EVENT_DATE_CHANGED", event, "Moved " + event.getName() + " to " + newDate.toString().replace('T', ' ')));
     }
 
     public void changeVenue(Event event, String newVenue) {
-        event.updateVenue(newVenue);
+        String venue = Validation.requireText(newVenue, "The venue");
+        event.updateVenue(venue);
         events.update(event);
-        notifyObservers(new ChangeEvent("EVENT_VENUE_CHANGED", event));
+        notifyObservers(new ChangeEvent("EVENT_VENUE_CHANGED", event, "Moved " + event.getName() + " to venue " + venue));
     }
 
     public void registerAttendee(Event event, Person person) {
+        requireNotOver(event);
+        int before = event.getAttendees().size();
         event.register(person);
+        if (event.getAttendees().size() == before) {
+            throw new IllegalArgumentException(person.getName() + " is already registered for " + event.getName() + ".");
+        }
         events.update(event);
+        notifyObservers(new ChangeEvent("ATTENDEE_REGISTERED", event,
+                "Registered " + person.getName() + " for " + event.getName()));
     }
 
     public void markAttendance(Event event, Person person) {
+        int before = event.getAttended().size();
         event.markAttendance(person);
+        if (event.getAttended().size() == before) {
+            throw new IllegalArgumentException(person.getName() + " is not registered for " + event.getName()
+                    + " or was already marked as attended.");
+        }
         events.update(event);
+        notifyObservers(new ChangeEvent("ATTENDANCE_MARKED", event,
+                "Marked " + person.getName() + " as attended at " + event.getName()));
     }
 
     /** Extras: "VIP" adds VIP seating, "MEAL" adds dinner. The holder is registered for the event. */
     public Ticket sellTicket(Event event, Person person, List<String> extras) {
-        registerAttendee(event, person);
+        requireNotOver(event);
+        event.register(person); // does nothing if they are already registered
+        events.update(event);
         Ticket ticket = new BasicTicket(BASE_TICKET_PRICE, event, person);
         if (extras.contains("VIP")) {
             ticket = new VipDecorator(ticket);
@@ -61,6 +85,8 @@ public class EventService implements Subject {
             ticket = new MealDecorator(ticket);
         }
         tickets.insert(ticket);
+        notifyObservers(new ChangeEvent("TICKET_SOLD", ticket, "Sold ticket #" + ticket.getId() + ": "
+                + ticket.getDescription() + " for " + ticket.getPrice() + " EGP"));
         return ticket;
     }
 
@@ -71,7 +97,13 @@ public class EventService implements Subject {
     }
 
     public void sendReminders(Event event) {
-        notifyObservers(new ChangeEvent("EVENT_REMINDER", event));
+        notifyObservers(new ChangeEvent("EVENT_REMINDER", event, "Sent reminders for " + event.getName()));
+    }
+
+    private static void requireNotOver(Event event) {
+        if (!event.getDate().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException(event.getName() + " has already taken place.");
+        }
     }
 
     @Override

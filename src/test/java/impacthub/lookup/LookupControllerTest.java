@@ -70,14 +70,14 @@ class LookupControllerTest {
     }
 
     private Volunteer volunteerWith(Skill s) {
-        Volunteer v = (Volunteer) people.register("Volunteer", "Ali", "ali@mail.com", "0100", "pw");
+        Volunteer v = (Volunteer) people.register("Volunteer", "Ali", "ali@mail.com", "01000000000", "pass");
         v.getSkills().add(s);
         people.update(v);
         return v;
     }
 
     private Beneficiary beneficiaryNeeding(ResourceCategory c) {
-        Beneficiary b = (Beneficiary) people.register("Beneficiary", "Fatma", "fatma@mail.com", "0100", "pw");
+        Beneficiary b = (Beneficiary) people.register("Beneficiary", "Fatma", "fatma@mail.com", "01000000000", "pass");
         b.getNeeds().add(new Need(c, "Basket", 1));
         people.update(b);
         return b;
@@ -158,6 +158,37 @@ class LookupControllerTest {
         beneficiaryNeeding(food);
         controller.deleteItem("ResourceCategory", food.getId());
         assertNotNull(categories.findById(food.getId()));
+    }
+
+    @Test
+    void refusesDuplicateNamesIgnoringCaseButAllowsARowToKeepItsOwnName() {
+        Skill cooking = skill("Cooking");
+        Skill teaching = skill("Teaching");
+
+        controller.createItem("Skill", "COOKING");
+        controller.updateItem("Skill", teaching.getId(), "cooking");
+        assertEquals(2, skills.findAll().size());
+        assertEquals("Teaching", skills.findById(teaching.getId()).getName());
+
+        controller.updateItem("Skill", cooking.getId(), "COOKING");
+        assertEquals("COOKING", skills.findById(cooking.getId()).getName());
+    }
+
+    @Test
+    void successfulChangesAreAnnouncedAndRefusedOnesAreNot() {
+        List<String> announced = new ArrayList<>();
+        controller.addObserver((source, change) -> announced.add(change.getDescription()));
+
+        controller.createItem("Skill", "Driving");
+        int id = skills.findAll().get(0).getId();
+        controller.createItem("Skill", "driving");
+        controller.updateItem("Skill", id, "");
+        controller.updateItem("Skill", id, "Driving B");
+        controller.deleteItem("Skill", id);
+        controller.deleteItem("Skill", id);
+
+        assertEquals(List.of("Created Skill \"Driving\"", "Renamed Skill #" + id + " to \"Driving B\"",
+                "Deleted Skill #" + id), announced);
     }
 
     @Test

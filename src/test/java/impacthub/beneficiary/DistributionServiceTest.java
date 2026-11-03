@@ -44,7 +44,7 @@ class DistributionServiceTest {
     }
 
     private Beneficiary beneficiary(String name, String email, int familySize) {
-        Beneficiary b = (Beneficiary) people.register("Beneficiary", name, email, "0100", "pw");
+        Beneficiary b = (Beneficiary) people.register("Beneficiary", name, email, "01000000000", "pass");
         b.setFamilySize(familySize);
         people.update(b);
         return b;

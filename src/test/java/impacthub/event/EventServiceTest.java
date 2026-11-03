@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EventServiceTest {
-    private static final LocalDateTime DATE = LocalDateTime.of(2026, 12, 1, 18, 0);
+    private static final LocalDateTime DATE = LocalDateTime.now().plusDays(30);
 
     private PersonService people;
     private EventService service;
@@ -32,8 +32,8 @@ class EventServiceTest {
         people = new PersonService();
         service = new EventService();
         events = new GenericDAO<>(Event.class);
-        sara = people.register("Donor", "Sara", "sara@mail.com", "0100", "pw");
-        omar = people.register("Donor", "Omar", "omar@mail.com", "0101", "pw");
+        sara = people.register("Donor", "Sara", "sara@mail.com", "01000000000", "pass");
+        omar = people.register("Donor", "Omar", "omar@mail.com", "01000000000", "pass");
         gala = service.createEvent("Fundraiser", "Gala", DATE, "Hall");
     }
 
@@ -46,9 +46,10 @@ class EventServiceTest {
     }
 
     @Test
-    void registeringTwiceCountsOnce() {
+    void registeringTwiceIsRefusedAndCountsOnce() {
         service.registerAttendee(gala, sara);
-        service.registerAttendee(events.findById(gala.getId()), people.findById(sara.getId()));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.registerAttendee(events.findById(gala.getId()), people.findById(sara.getId())));
         assertEquals(1, events.findById(gala.getId()).getAttendees().size());
     }
 
@@ -56,10 +57,30 @@ class EventServiceTest {
     void onlyRegisteredPeopleCanBeMarkedAsAttended() {
         service.registerAttendee(gala, sara);
         service.markAttendance(gala, sara);
-        service.markAttendance(gala, omar);
+        assertThrows(IllegalArgumentException.class, () -> service.markAttendance(gala, omar));
         List<Person> attended = events.findById(gala.getId()).getAttended();
         assertEquals(1, attended.size());
         assertEquals(sara.getId(), attended.get(0).getId());
+    }
+
+    @Test
+    void eventsThatAlreadyTookPlaceCannotBeRegisteredForOrSold() {
+        Event past = new Fundraiser("Old Gala", LocalDateTime.now().minusDays(1), "Hall");
+        events.insert(past);
+        assertThrows(IllegalArgumentException.class, () -> service.registerAttendee(past, sara));
+        assertThrows(IllegalArgumentException.class, () -> service.sellTicket(past, sara, List.of()));
+        assertTrue(service.getTicketsByEvent(past).isEmpty());
+    }
+
+    @Test
+    void newDatesMustBeInTheFutureAndNamesAndVenuesAreRequired() {
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
+        LocalDateTime nextWeek = LocalDateTime.now().plusDays(7);
+        assertThrows(IllegalArgumentException.class, () -> service.createEvent("Workshop", "Java", yesterday, "Lab"));
+        assertThrows(IllegalArgumentException.class, () -> service.createEvent("Workshop", " ", nextWeek, "Lab"));
+        assertThrows(IllegalArgumentException.class, () -> service.createEvent("Workshop", "Java", nextWeek, " "));
+        assertThrows(IllegalArgumentException.class, () -> service.changeDate(gala, yesterday));
+        assertThrows(IllegalArgumentException.class, () -> service.changeVenue(gala, " "));
     }
 
     @Test

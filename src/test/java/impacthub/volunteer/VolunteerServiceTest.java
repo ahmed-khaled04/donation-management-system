@@ -29,8 +29,8 @@ class VolunteerServiceTest {
         people = new PersonService();
         service = new VolunteerService();
         assignments = new GenericDAO<>(Assignment.class);
-        ali = (Volunteer) people.register("Volunteer", "Ali", "ali@mail.com", "0100", "pw");
-        event = new EventService().createEvent("Workshop", "Training", LocalDateTime.of(2026, 12, 1, 10, 0), "Hall");
+        ali = (Volunteer) people.register("Volunteer", "Ali", "ali@mail.com", "01000000000", "pass");
+        event = new EventService().createEvent("Workshop", "Training", LocalDateTime.now().plusDays(30), "Hall");
     }
 
     private double savedHours(Volunteer v) {
@@ -53,6 +53,13 @@ class VolunteerServiceTest {
         assertThrows(IllegalArgumentException.class, () -> service.logHours(a, hours));
         assertEquals(0, assignments.findById(a.getId()).getHoursWorked());
         assertEquals(0, savedHours(ali));
+    }
+
+    @Test
+    void oneEntryCannotBeMoreThan24Hours() {
+        Assignment a = service.assign(ali, event, "Helper");
+        assertDoesNotThrow(() -> service.logHours(a, 24));
+        assertThrows(IllegalArgumentException.class, () -> service.logHours(a, 24.5));
     }
 
     @Test
@@ -81,7 +88,7 @@ class VolunteerServiceTest {
 
     @Test
     void sameVolunteerCanWorkAtADifferentEvent() {
-        Event other = new EventService().createEvent("Outreach", "Visit", LocalDateTime.of(2026, 12, 2, 10, 0), "Giza");
+        Event other = new EventService().createEvent("Outreach", "Visit", LocalDateTime.now().plusDays(30), "Giza");
         service.assign(ali, event, "Helper");
         assertDoesNotThrow(() -> service.assign(ali, other, "Helper"));
     }
@@ -95,7 +102,7 @@ class VolunteerServiceTest {
         skills.insert(cooking);
         ali.getSkills().add(firstAid);
         people.update(ali);
-        people.register("Volunteer", "Mona", "mona@mail.com", "0101", "pw");
+        people.register("Volunteer", "Mona", "mona@mail.com", "01000000000", "pass");
 
         assertEquals(1, service.findBySkill(firstAid).size());
         assertTrue(service.findBySkill(cooking).isEmpty());

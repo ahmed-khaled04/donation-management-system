@@ -1,5 +1,6 @@
 package impacthub.donation;
 
+import impacthub.Validation;
 import impacthub.donation.receipt.BasicReceipt;
 import impacthub.donation.receipt.Receipt;
 import impacthub.donation.receipt.TaxInfoDecorator;
@@ -16,17 +17,18 @@ import java.util.List;
 
 /** Records donations and tells its observers about each new one. */
 public class DonationService implements Subject {
+    private static final double MAX_AMOUNT = 1_000_000_000;
+
     private final List<Observer> observers = new ArrayList<>();
     private final GenericDAO<Donation> donations = new GenericDAO<>(Donation.class);
     private final GenericDAO<Person> people = new GenericDAO<>(Person.class);
 
     public Donation recordDonation(String type, Donor donor, double amount) {
-        if (!Double.isFinite(amount) || amount <= 0) {
-            throw new IllegalArgumentException("The amount must be more than 0.");
-        }
+        Validation.requirePositive(amount, MAX_AMOUNT, "The amount");
         Donation donation = DonationFactory.create(type, donor, amount);
         donations.insert(donation);
-        notifyObservers(new ChangeEvent("DONATION_RECORDED", donation));
+        notifyObservers(new ChangeEvent("DONATION_RECORDED", donation, "Recorded " + donation.getType() + " donation #"
+                + donation.getId() + " of " + amount + " EGP from " + donor.getName()));
         people.update(donation.getDonor()); // save the new total set by StatsObserver
         return donation;
     }

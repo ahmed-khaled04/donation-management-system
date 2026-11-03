@@ -4,6 +4,8 @@ import impacthub.beneficiary.BeneficiaryView;
 import impacthub.beneficiary.DistributionService;
 import impacthub.beneficiary.Need;
 import impacthub.beneficiary.Resource;
+import impacthub.dashboard.ActivityLogService;
+import impacthub.dashboard.DashboardView;
 import impacthub.donation.DonationService;
 import impacthub.donation.DonationView;
 import impacthub.event.Event;
@@ -20,26 +22,28 @@ import impacthub.observer.AttendeeNotificationObserver;
 import impacthub.observer.ReceiptObserver;
 import impacthub.observer.StatsObserver;
 import impacthub.observer.StockObserver;
+import impacthub.observer.Subject;
 import impacthub.observer.ThankYouObserver;
 import impacthub.people.Beneficiary;
 import impacthub.people.Donor;
 import impacthub.people.PersonService;
 import impacthub.people.PersonView;
+import impacthub.people.Session;
 import impacthub.people.Skill;
 import impacthub.people.Volunteer;
 import impacthub.persistence.GenericDAO;
 import impacthub.volunteer.VolunteerService;
 import impacthub.volunteer.VolunteerView;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
-/** Starts the app: wires the services, observers and strategies, then shows the main menu. */
+/** Starts the app: wires the services, observers and strategies, then opens the dashboard. */
 public class App extends Application {
     @Override
     public void start(Stage stage) {
@@ -64,28 +68,26 @@ public class App extends Application {
             addSampleData(personService, eventService);
         }
 
-        Button people = new Button("People (sign up / log in)");
-        people.setOnAction(e -> new PersonView(personService).show());
-        Button donations = new Button("Donations");
-        donations.setOnAction(e -> new DonationView(donationService, personService).show());
-        Button events = new Button("Events");
-        events.setOnAction(e -> new EventView(eventService, personService).show());
-        Button volunteers = new Button("Volunteers");
-        volunteers.setOnAction(e -> new VolunteerView(volunteerService, personService).show());
-        Button beneficiaries = new Button("Beneficiaries");
-        beneficiaries.setOnAction(e -> new BeneficiaryView(distributionService, personService).show());
-        Button lookups = new Button("Lookup tables");
-        lookups.setOnAction(e -> new LookupView().show());
+        // subscribed after the sample data, so only what users do is tracked
+        Session session = new Session();
+        ActivityLogService activityLog = new ActivityLogService(session);
+        List<Subject> tracked = List.of(session, personService, donationService, eventService,
+                volunteerService, distributionService);
+        tracked.forEach(subject -> subject.addObserver(activityLog));
 
-        VBox root = new VBox(10, new Label("Impact Hub - NGO Management System"),
-                people, donations, events, volunteers, beneficiaries, lookups,
-                new Label("Notifications and receipts are printed in the terminal."));
-        root.setStyle("-fx-padding: 20;");
-        root.getChildren().stream().filter(n -> n instanceof Button).forEach(b -> ((Button) b).setMaxWidth(260));
+        Map<String, Supplier<View>> services = new LinkedHashMap<>();
+        services.put("People", () -> new PersonView(personService, session));
+        services.put("Donations", () -> new DonationView(donationService, personService));
+        services.put("Events", () -> new EventView(eventService, personService));
+        services.put("Volunteers", () -> new VolunteerView(volunteerService, personService));
+        services.put("Beneficiaries", () -> new BeneficiaryView(distributionService, personService));
+        services.put("Lookup tables", () -> {
+            LookupView lookups = new LookupView();
+            lookups.addObserver(activityLog);
+            return lookups;
+        });
 
-        stage.setTitle("Impact Hub");
-        stage.setScene(new Scene(root, 380, 360));
-        stage.show();
+        new DashboardView(stage, session, activityLog, () -> new PersonView(personService, session), services).show();
     }
 
     /** Deleting every person must not bring the sample data back on top of the other tables. */

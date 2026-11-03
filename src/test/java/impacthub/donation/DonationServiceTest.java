@@ -24,7 +24,7 @@ class DonationServiceTest {
         TestDb.clear();
         people = new PersonService();
         service = new DonationService();
-        donor = (Donor) people.register("Donor", "Sara", "sara@mail.com", "0100", "pw");
+        donor = (Donor) people.register("Donor", "Sara", "sara@mail.com", "01000000000", "pass");
     }
 
     @Test
@@ -40,6 +40,13 @@ class DonationServiceTest {
     void rejectsAmountsThatAreNotPositiveFiniteNumbers(double amount) {
         assertThrows(IllegalArgumentException.class, () -> service.recordDonation("Online", donor, amount));
         assertTrue(service.getAllDonations().isEmpty());
+    }
+
+    @Test
+    void rejectsAmountsAboveTheLimitSoTotalsCannotOverflow() {
+        assertDoesNotThrow(() -> service.recordDonation("Online", donor, 1_000_000_000));
+        assertThrows(IllegalArgumentException.class, () -> service.recordDonation("Online", donor, 1_000_000_001));
+        assertThrows(IllegalArgumentException.class, () -> service.recordDonation("Online", donor, 1e308));
     }
 
     @Test
@@ -63,7 +70,7 @@ class DonationServiceTest {
 
     @Test
     void listsOnlyTheDonationsOfTheGivenDonor() {
-        Donor other = (Donor) people.register("Donor", "Omar", "omar@mail.com", "0101", "pw");
+        Donor other = (Donor) people.register("Donor", "Omar", "omar@mail.com", "01000000000", "pass");
         service.recordDonation("Online", donor, 10);
         service.recordDonation("Online", other, 20);
         assertEquals(1, service.getDonationsByDonor(other).size());
