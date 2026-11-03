@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SRS - Impact Hub (Phase 1)</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 18mm 20mm 18mm;
+    @top-left { content: "Impact Hub - Software Requirements Specification (Phase 1)"; font: 8pt Arial, "Liberation Sans", sans-serif; color: #555; vertical-align: bottom; padding-bottom: 2.5mm; border-bottom: 0.6pt solid #1F4E79; }
+    @top-center { content: ""; border-bottom: 0.6pt solid #1F4E79; vertical-align: bottom; }
+    @top-right { content: "CSE336 Software Design Patterns"; font: 8pt Arial, "Liberation Sans", sans-serif; color: #555; vertical-align: bottom; padding-bottom: 2.5mm; border-bottom: 0.6pt solid #1F4E79; }
+    @bottom-center { content: "Page " counter(page); font: 8pt Arial, "Liberation Sans", sans-serif; color: #555; }
+  }
+  @page cover {
+    @top-left { content: none; border: none; }
+    @top-center { content: none; border: none; }
+    @top-right { content: none; border: none; }
+    @bottom-center { content: none; }
+  }
+  @page landscape { size: A4 landscape; margin: 18mm 14mm 16mm 14mm; }
+
+  html { font-family: Arial, "Liberation Sans", Helvetica, sans-serif; font-size: 10pt; color: #1a1a1a; line-height: 1.35; }
+  body { margin: 0; }
+  h1 { color: #1F4E79; font-size: 17pt; margin: 18pt 0 6pt; break-after: avoid; }
+  h2 { color: #1F4E79; font-size: 13pt; margin: 13pt 0 5pt; break-after: avoid; }
+  h3 { color: #1F4E79; font-size: 11pt; margin: 11pt 0 4pt; break-after: avoid; }
+  p { margin: 0 0 6pt; }
+  ul, ol { margin: 0 0 7pt; padding-left: 20pt; }
+  li { margin-bottom: 2pt; }
+  code, .mono { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 8.6pt; }
+  pre { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 8.2pt; background: #F4F4F4; border: 0.6pt solid #D9D9D9; padding: 6pt 8pt; margin: 4pt 0 8pt; white-space: pre-wrap; break-inside: avoid; line-height: 1.3; }
+  table { width: 100%; border-collapse: collapse; margin: 4pt 0 10pt; font-size: 8.8pt; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  th { background: #1F4E79; color: #fff; text-align: left; padding: 4pt 5pt; font-weight: bold; border: 0.6pt solid #1F4E79; }
+  td { padding: 3.5pt 5pt; border: 0.6pt solid #BFC9D4; vertical-align: middle; }
+  tbody tr:nth-child(even) td { background: #F2F6FA; }
+  .status { white-space: nowrap; width: 92pt; }
+  .id { white-space: nowrap; width: 38pt; }
+  .new-page { break-before: page; }
+
+  /* cover */
+  .cover { page: cover; text-align: center; padding-top: 14mm; }
+  .cover img { width: 32mm; }
+  .cover .uni { color: #333; font-size: 10.5pt; margin-top: 5mm; line-height: 1.45; }
+  .cover .title { color: #1F4E79; font-size: 24pt; font-weight: bold; margin: 14mm 0 3mm; }
+  .cover .name { font-size: 18pt; font-weight: bold; margin-bottom: 2mm; }
+  .cover .sub { font-size: 12.5pt; margin-bottom: 1.5mm; }
+  .cover .sub2 { font-size: 11pt; color: #555; }
+  .cover h3 { color: #1a1a1a; font-size: 11.5pt; margin-top: 13mm; }
+  .cover table { width: 75%; margin: 3mm auto 0; font-size: 9.5pt; }
+  .cover td, .cover th { text-align: center; }
+  .cover .version { color: #555; font-size: 9.5pt; margin-top: 10mm; }
+
+  /* contents */
+  .toc { break-before: page; }
+  .toc h1 { margin-top: 0; }
+  .toc .row { display: flex; align-items: baseline; font-size: 10pt; margin: 3.2pt 0; }
+  .toc .row.l1 { font-weight: bold; margin-top: 6pt; }
+  .toc .row.l2 { padding-left: 16pt; }
+  .toc .row .dots { flex: 1; border-bottom: 1pt dotted #888; margin: 0 4pt; transform: translateY(-3pt); }
+
+  /* figures */
+  .figure-page { page: landscape; break-before: page; text-align: center; }
+  .figure-page img { max-width: 100%; max-height: 160mm; }
+  .caption { font-style: italic; font-size: 9.5pt; color: #333; margin-top: 4pt; }
+  .back-portrait { break-before: page; }
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<section class="cover">
+  <img src="asu-logo.png" alt="Ain Shams University Faculty of Engineering logo">
+  <div class="uni">Ain Shams University - Faculty of Engineering<br>CSE336 Software Design Patterns - Fall 2026</div>
+  <div class="title">Software Requirements Specification</div>
+  <div class="name">Impact Hub</div>
+  <div class="sub">Non-Profit Organization Management System</div>
+  <div class="sub2">Major Task - Phase 1 Submission</div>
+  <h3>Team Members</h3>
+  <table>
+    <thead><tr><th>Name</th><th>Student ID</th></tr></thead>
+    <tbody>
+      <tr><td>Saifeldin Tamer ElSayes</td><td>22P0233</td></tr>
+      <tr><td>Mohamed Emad Eldeen</td><td>22P0065</td></tr>
+      <tr><td>Ahmed Khaled Hamdy</td><td>22P0024</td></tr>
+      <tr><td>Yousef Sameh Fathi</td><td>22P0010</td></tr>
+      <tr><td>Seif Eldeen Ibrahim</td><td>22P0023</td></tr>
+      <tr><td>Mohamed Khaled Mohamed Anwar</td><td>22P0041</td></tr>
+    </tbody>
+  </table>
+  <div class="version">Version 1.0 - November 2026</div>
+</section>
+
+<!-- ============================ CONTENTS ============================ -->
+<section class="toc">
+  <h1>Contents</h1>
+  <div class="row l1"><span>1. Introduction</span><span class="dots"></span><span class="pn" data-for="1. Introduction">3</span></div>
+  <div class="row l2"><span>1.1 Purpose</span><span class="dots"></span><span class="pn" data-for="1.1 Purpose">3</span></div>
+  <div class="row l2"><span>1.2 Scope</span><span class="dots"></span><span class="pn" data-for="1.2 Scope">3</span></div>
+  <div class="row l2"><span>1.3 Definitions and Abbreviations</span><span class="dots"></span><span class="pn" data-for="1.3 Definitions and Abbreviations">3</span></div>
+  <div class="row l2"><span>1.4 References</span><span class="dots"></span><span class="pn" data-for="1.4 References">3</span></div>
+  <div class="row l2"><span>1.5 Document Overview</span><span class="dots"></span><span class="pn" data-for="1.5 Document Overview">4</span></div>
+  <div class="row l1"><span>2. Overall Description</span><span class="dots"></span><span class="pn" data-for="2. Overall Description">4</span></div>
+  <div class="row l2"><span>2.1 Product Perspective</span><span class="dots"></span><span class="pn" data-for="2.1 Product Perspective">4</span></div>
+  <div class="row l2"><span>2.2 Product Functions</span><span class="dots"></span><span class="pn" data-for="2.2 Product Functions">4</span></div>
+  <div class="row l2"><span>2.3 User Classes</span><span class="dots"></span><span class="pn" data-for="2.3 User Classes">4</span></div>
+  <div class="row l2"><span>2.4 Operating Environment</span><span class="dots"></span><span class="pn" data-for="2.4 Operating Environment">5</span></div>
+  <div class="row l2"><span>2.5 Design and Implementation Constraints</span><span class="dots"></span><span class="pn" data-for="2.5 Design and Implementation Constraints">5</span></div>
+  <div class="row l2"><span>2.6 Assumptions and Dependencies</span><span class="dots"></span><span class="pn" data-for="2.6 Assumptions and Dependencies">5</span></div>
+  <div class="row l1"><span>3. Functional Requirements</span><span class="dots"></span><span class="pn" data-for="3. Functional Requirements">6</span></div>
+  <div class="row l2"><span>3.1 People and Accounts</span><span class="dots"></span><span class="pn" data-for="3.1 People and Accounts">6</span></div>
+  <div class="row l2"><span>3.2 Donation Management</span><span class="dots"></span><span class="pn" data-for="3.2 Donation Management">6</span></div>
+  <div class="row l2"><span>3.3 Event Management</span><span class="dots"></span><span class="pn" data-for="3.3 Event Management">6</span></div>
+  <div class="row l2"><span>3.4 Volunteer Management</span><span class="dots"></span><span class="pn" data-for="3.4 Volunteer Management">7</span></div>
+  <div class="row l2"><span>3.5 Beneficiary Management</span><span class="dots"></span><span class="pn" data-for="3.5 Beneficiary Management">7</span></div>
+  <div class="row l2"><span>3.6 Communication</span><span class="dots"></span><span class="pn" data-for="3.6 Communication">7</span></div>
+  <div class="row l2"><span>3.7 Administration - Lookup Tables</span><span class="dots"></span><span class="pn" data-for="3.7 Administration - Lookup Tables">8</span></div>
+  <div class="row l1"><span>4. Client Requirements</span><span class="dots"></span><span class="pn" data-for="4. Client Requirements">9</span></div>
+  <div class="row l1"><span>5. Non-Functional Requirements</span><span class="dots"></span><span class="pn" data-for="5. Non-Functional Requirements">9</span></div>
+  <div class="row l1"><span>6. System Design</span><span class="dots"></span><span class="pn" data-for="6. System Design">11</span></div>
+  <div class="row l2"><span>6.1 Architecture - Model View Controller</span><span class="dots"></span><span class="pn" data-for="6.1 Architecture - Model View Controller">11</span></div>
+  <div class="row l2"><span>6.2 Class Diagrams</span><span class="dots"></span><span class="pn" data-for="6.2 Class Diagrams">12</span></div>
+  <div class="row l2"><span>6.3 Design Patterns Applied</span><span class="dots"></span><span class="pn" data-for="6.3 Design Patterns Applied">20</span></div>
+  <div class="row l2"><span>6.4 CRUD Lookup Tables</span><span class="dots"></span><span class="pn" data-for="6.4 CRUD Lookup Tables">22</span></div>
+  <div class="row l2"><span>6.5 Main Design Decisions</span><span class="dots"></span><span class="pn" data-for="6.5 Main Design Decisions">23</span></div>
+  <div class="row l1"><span>7. Work Distribution</span><span class="dots"></span><span class="pn" data-for="7. Work Distribution">24</span></div>
+  <div class="row l1"><span>8. Traceability to the Phase 1 Grading Criteria</span><span class="dots"></span><span class="pn" data-for="8. Traceability to the Phase 1 Grading Criteria">24</span></div>
+  <div class="row l1"><span>9. Running the System</span><span class="dots"></span><span class="pn" data-for="9. Running the System">25</span></div>
+  <div class="row l2"><span>9.1 Build and Run</span><span class="dots"></span><span class="pn" data-for="9.1 Build and Run">25</span></div>
+  <div class="row l2"><span>9.2 Sample Data</span><span class="dots"></span><span class="pn" data-for="9.2 Sample Data">25</span></div>
+  <div class="row l2"><span>9.3 Demonstration Scenario</span><span class="dots"></span><span class="pn" data-for="9.3 Demonstration Scenario">26</span></div>
+</section>
+
+<!-- ============================ 1 ============================ -->
+<section class="new-page">
+<h1>1. Introduction</h1>
+<h2>1.1 Purpose</h2>
+<p>This Software Requirements Specification (SRS) describes Impact Hub, a management system for a non-profit organization. It defines what the system must do, the quality attributes it must have, and how its object-oriented design uses design patterns to stay flexible, maintainable and reusable.</p>
+<p>The document is written for the course instructor and teaching assistants who evaluate the project, and for the six team members who build it. It covers Phase 1 of the CSE336 major task.</p>
+<p>The class diagrams and the Java code described here are the same design: every class in the diagrams exists in the code with the same attributes, operations and relationships.</p>
+
+<h2>1.2 Scope</h2>
+<p>Impact Hub supports the daily work of a non-profit: managing people and accounts, receiving donations, organizing events and volunteers, supporting beneficiaries and communicating with all of them. The project is delivered in two phases:</p>
+<ul>
+  <li><b>Phase 1</b> (this document): the complete class design and a working Java implementation of all five modules. It uses the patterns taught so far - Strategy, Observer, Decorator, Factory and Singleton - organized with the MVC architecture, and has editable CRUD lookup tables. The user interface is a deliberately simple set of JavaFX windows whose only purpose is to show that every feature works.</li>
+  <li><b>Phase 2</b>: the remaining patterns (Command, Adapter, Facade, Template Method, Iterator, State, Proxy), admin pages, and integration with real payment, e-mail and SMS providers.</li>
+</ul>
+<p>Requirements that belong to Phase 2 are still listed in Section 3 so the design stays complete, and each one is marked with its phase.</p>
+
+<h2>1.3 Definitions and Abbreviations</h2>
+<table>
+  <thead><tr><th style="width:24%">Term</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td>NPO</td><td>Non-profit organization</td></tr>
+    <tr><td>Donor</td><td>A person or company that gives money (online or by check) or goods (in-kind donation)</td></tr>
+    <tr><td>Volunteer</td><td>A person who gives their time at the organization's events</td></tr>
+    <tr><td>Beneficiary</td><td>A person, with their household, whom the organization supports</td></tr>
+    <tr><td>Assignment</td><td>A volunteer working at one event in a given role</td></tr>
+    <tr><td>Distribution</td><td>A quantity of a resource given to a beneficiary</td></tr>
+    <tr><td>Lookup table</td><td>A small reference table (skills, resource categories) that staff edit at runtime</td></tr>
+    <tr><td>CRUD</td><td>Create, Read, Update, Delete</td></tr>
+    <tr><td>DAO</td><td>Data Access Object - the class that stores and retrieves records</td></tr>
+    <tr><td>MVC</td><td>Model-View-Controller architecture</td></tr>
+    <tr><td>EGP</td><td>Egyptian Pound, the currency used for all amounts</td></tr>
+  </tbody>
+</table>
+
+<h2>1.4 References</h2>
+<ul>
+  <li>CSE336 Major Assessment Task, Part 1 - project brief and evaluation criteria.</li>
+  <li>E. Freeman, E. Robson, B. Bates, K. Sierra, <i>Head First Design Patterns</i>, O'Reilly.</li>
+  <li>E. Gamma, R. Helm, R. Johnson, J. Vlissides, <i>Design Patterns: Elements of Reusable Object-Oriented Software</i>, 1995.</li>
+  <li>CSE336 lecture slides (Strategy, Observer, Decorator, Factory, Singleton) and labs.</li>
+</ul>
+
+<h2>1.5 Document Overview</h2>
+<p>Section 2 describes the product and its users. Section 3 lists the functional requirements per module and Section 4 the client requirements that extend the basic brief. Section 5 gives the non-functional requirements. Section 6 presents the design: architecture, class diagrams, each design pattern, the lookup tables and the main design decisions. Section 7 shows how the work is divided in the team, Section 8 maps every Phase 1 grading item to the diagram and code that satisfies it, and Section 9 explains how to run the system.</p>
+
+<!-- ============================ 2 ============================ -->
+<h1>2. Overall Description</h1>
+<h2>2.1 Product Perspective</h2>
+<p>Impact Hub is a new, self-contained desktop system. In Phase 1 it is a Java application with a basic JavaFX interface: a main menu opens one window per module. Its data is kept in a local SQLite database file (<code>impacthub.db</code>) that is filled with sample data on the first run, so every feature can be demonstrated immediately. Payments and message delivery are simulated: no real card gateway, bank, e-mail server or SMS provider is contacted, and every delivered message is printed in the terminal with its channel.</p>
+
+<h2>2.2 Product Functions</h2>
+<table>
+  <thead><tr><th style="width:26%">Module</th><th>Main functions</th></tr></thead>
+  <tbody>
+    <tr><td>People and accounts</td><td>Sign up as donor, volunteer or beneficiary; log in with a hashed password; search and delete people; each person has a preferred contact channel</td></tr>
+    <tr><td>Donation management</td><td>Record online, check and in-kind donations; list donations; issue receipts with optional tax information and thank-you note; thank donors automatically; produce yearly tax statements</td></tr>
+    <tr><td>Event management</td><td>Create fundraisers, workshops and outreach programs; register attendees; sell tickets with extras; reschedule events and notify attendees; track attendance and send reminders</td></tr>
+    <tr><td>Volunteer management</td><td>Store skills, availability and preferences; assign volunteers to events with a role; track hours; issue certificates</td></tr>
+    <tr><td>Beneficiary management</td><td>Store households and their needs, distribute resources from stock, evaluate the impact of programs</td></tr>
+    <tr><td>Communication</td><td>Notify people automatically through their preferred channel (e-mail, SMS or social media)</td></tr>
+    <tr><td>Administration</td><td>Maintain the lookup tables: volunteer skills and resource categories</td></tr>
+  </tbody>
+</table>
+
+<h2>2.3 User Classes</h2>
+<table>
+  <thead><tr><th style="width:26%">User</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Administrator</td><td>Maintains the lookup tables</td></tr>
+    <tr><td>Staff member</td><td>Records donations and distributions, manages events and volunteer assignments</td></tr>
+    <tr><td>Donor</td><td>Gives money or goods, buys event tickets, receives receipts and thank-you messages</td></tr>
+    <tr><td>Volunteer</td><td>Gives time at events, receives event updates and certificates</td></tr>
+    <tr><td>Beneficiary</td><td>Receives support and updates about events that concern them</td></tr>
+  </tbody>
+</table>
+
+<h2>2.4 Operating Environment</h2>
+<p>Java 21 (JDK) built with Apache Maven, on Windows, Linux or macOS. Maven downloads JavaFX 21 and the SQLite JDBC driver, so nothing else has to be installed. The project opens directly in IntelliJ IDEA or NetBeans as a Maven project.</p>
+
+<h2>2.5 Design and Implementation Constraints</h2>
+<ul>
+  <li>The design must apply the design patterns taught in the course and follow object-oriented principles: encapsulation, program to an interface, favour composition over inheritance, and the open/closed principle.</li>
+  <li>The code contains exactly the classes of the class diagram; the only extra class is <code>App</code>, the JavaFX entry point that wires the objects together and opens the main menu.</li>
+  <li>Views only talk to their controller; controllers call the services; only views display results.</li>
+  <li>All data goes through one access point (the <code>DatabaseManager</code> Singleton) and one generic DAO.</li>
+</ul>
+
+<h2>2.6 Assumptions and Dependencies</h2>
+<ul>
+  <li>All amounts are in Egyptian Pounds (EGP).</li>
+  <li>Online and check payments are simulated in Phase 1; integration with a payment provider is Phase 2.</li>
+  <li>E-mail, SMS and social-media delivery are simulated by printing the message in the terminal with its channel and address; real providers are Phase 2.</li>
+</ul>
+</section>
+
+<!-- ============================ 3 ============================ -->
+<section class="new-page">
+<h1>3. Functional Requirements</h1>
+<p>Each requirement has an identifier, a description and the phase in which it is delivered. "Phase 1 - service only" means the operation is implemented and working in the model, but the Phase 1 user interface has no button for it.</p>
+
+<h2>3.1 People and Accounts</h2>
+<table>
+  <thead><tr><th class="id">ID</th><th>Requirement</th><th class="status">Status</th></tr></thead>
+  <tbody>
+    <tr><td>FR-P1</td><td>The system shall let a person sign up as a donor, volunteer or beneficiary with name, e-mail, phone and password.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-P2</td><td>The system shall refuse a sign-up without a name, e-mail or password.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-P3</td><td>The system shall store only a SHA-256 hash of each password and log people in by e-mail and password.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-P4</td><td>The system shall let staff search people by name; an empty name lists everyone.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-P5</td><td>The system shall let staff delete a person by id.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-P6</td><td>The system shall keep each person's preferred contact channel (e-mail by default).</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-P7</td><td>The system shall let a person edit their contact details and preferred channel from the interface.</td><td>Phase 2</td></tr>
+  </tbody>
+</table>
+
+<h2>3.2 Donation Management</h2>
+<table>
+  <thead><tr><th class="id">ID</th><th>Requirement</th><th class="status">Status</th></tr></thead>
+  <tbody>
+    <tr><td>FR-D1</td><td>The system shall store donor details: donor type (individual or corporate), tax id and total donated.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-D2</td><td>The system shall record a donation of type online, check or in-kind for a donor with an amount.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-D3</td><td>The system shall reject a donation whose amount is not more than 0.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-D4</td><td>The system shall keep each type's own details: transaction id and gateway (online), check number, bank and clearing date (check), item description, quantity and estimated value (in-kind).</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-D5</td><td>The system shall list all recorded donations.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-D6</td><td>The system shall issue a receipt for any recorded donation, with optional tax information and/or thank-you note, and print a receipt automatically when a donation is recorded.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-D7</td><td>The system shall keep each donor's total donated and the organization's total raised up to date.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-D8</td><td>The system shall produce a yearly donation statement for a donor's tax records.</td><td>Phase 1 - service only</td></tr>
+    <tr><td>FR-D9</td><td>The system shall connect to a real payment gateway and bank clearing service.</td><td>Phase 2</td></tr>
+  </tbody>
+</table>
+
+<h2>3.3 Event Management</h2>
+<table>
+  <thead><tr><th class="id">ID</th><th>Requirement</th><th class="status">Status</th></tr></thead>
+  <tbody>
+    <tr><td>FR-E1</td><td>The system shall create fundraisers (target amount), workshops (capacity, trainer) and outreach programs (location, team size) with name, date and venue.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-E2</td><td>The system shall register people for an event and never register the same person twice.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-E3</td><td>The system shall sell tickets (100 EGP) with optional VIP seating (+150 EGP) and dinner (+40 EGP); the holder is registered for the event.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-E4</td><td>The system shall change an event's date and inform every attendee.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-E5</td><td>The system shall change an event's venue and send reminders, informing every attendee.</td><td>Phase 1 - service only</td></tr>
+    <tr><td>FR-E6</td><td>The system shall mark the attendance of registered people.</td><td>Phase 1 - service only</td></tr>
+    <tr><td>FR-E7</td><td>The system shall move events through their status (planned, ongoing, completed, cancelled) and enforce workshop capacity.</td><td>Phase 2</td></tr>
+  </tbody>
+</table>
+
+<h2>3.4 Volunteer Management</h2>
+<table>
+  <thead><tr><th class="id">ID</th><th>Requirement</th><th class="status">Status</th></tr></thead>
+  <tbody>
+    <tr><td>FR-V1</td><td>The system shall store volunteers' skills (from the Skill lookup table), availability and preferences, and list them.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-V2</td><td>The system shall assign a volunteer to an event with a role and list the event's assignments.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-V3</td><td>The system shall track hours per assignment and per volunteer, refusing hours that are not more than 0.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-V4</td><td>The system shall issue a volunteer certificate with the total hours.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-V5</td><td>The system shall find the volunteers who have a given skill.</td><td>Phase 1 - service only</td></tr>
+    <tr><td>FR-V6</td><td>The system shall let volunteers book their own shifts from a calendar.</td><td>Phase 2</td></tr>
+  </tbody>
+</table>
+
+<h2>3.5 Beneficiary Management</h2>
+<table>
+  <thead><tr><th class="id">ID</th><th>Requirement</th><th class="status">Status</th></tr></thead>
+  <tbody>
+    <tr><td>FR-B1</td><td>The system shall store beneficiaries with address, family size and a list of needs (category, description, priority), and list them with the resources in stock.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-B2</td><td>The system shall record the distribution of a resource to a beneficiary, refusing quantities above the stock.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-B3</td><td>The system shall reduce the stock automatically after each distribution.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-B4</td><td>The system shall evaluate the impact of a program with a method suited to that program (food aid or education).</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-B5</td><td>The system shall add new resources and restock them from the interface.</td><td>Phase 2</td></tr>
+  </tbody>
+</table>
+
+<h2>3.6 Communication</h2>
+<table>
+  <thead><tr><th class="id">ID</th><th>Requirement</th><th class="status">Status</th></tr></thead>
+  <tbody>
+    <tr><td>FR-C1</td><td>The system shall notify everyone concerned automatically when a donation is recorded or an event changes.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-C2</td><td>The system shall deliver each notification through the recipient's preferred channel - e-mail, SMS or social media - falling back to e-mail when needed.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-C3</td><td>The system shall send real e-mails and SMS messages and post on social-media pages.</td><td>Phase 2</td></tr>
+  </tbody>
+</table>
+
+<h2>3.7 Administration - Lookup Tables</h2>
+<table>
+  <thead><tr><th class="id">ID</th><th>Requirement</th><th class="status">Status</th></tr></thead>
+  <tbody>
+    <tr><td>FR-L1</td><td>The administrator shall create, list, rename and delete volunteer skills.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-L2</td><td>The administrator shall create, list, rename and delete resource categories.</td><td>Phase 1 - implemented</td></tr>
+    <tr><td>FR-L3</td><td>The system shall refuse to delete a lookup row that is still used by a volunteer, resource or need.</td><td>Phase 2</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 4 / 5 ============================ -->
+<section class="new-page">
+<h1>4. Client Requirements</h1>
+<p>The brief lists the basic modules. The requirements below extend it with what the organization's staff, donors, volunteers and beneficiaries need on top of those modules. Each one is implemented in Phase 1 and traced to the classes that satisfy it.</p>
+<table>
+  <thead><tr><th class="id">ID</th><th>Client requirement</th><th style="width:34%">Satisfied by</th></tr></thead>
+  <tbody>
+    <tr><td>CR-01</td><td>Every person chooses how they want to be contacted - e-mail, SMS or social media - and messages arrive through that channel.</td><td>Strategy: NotificationService + Email/Sms/SocialMediaStrategy</td></tr>
+    <tr><td>CR-02</td><td>Every donor is thanked automatically right after donating.</td><td>Observer: ThankYouObserver</td></tr>
+    <tr><td>CR-03</td><td>A receipt is printed for every donation without staff asking for it.</td><td>Observer: ReceiptObserver</td></tr>
+    <tr><td>CR-04</td><td>A donor decides whether the receipt includes tax information and a thank-you note.</td><td>Decorator: TaxInfoDecorator, ThankYouNoteDecorator</td></tr>
+    <tr><td>CR-05</td><td>Each donor's running total and the organization's total raised are always up to date.</td><td>Observer: StatsObserver</td></tr>
+    <tr><td>CR-06</td><td>Event tickets can include VIP seating and dinner in any combination.</td><td>Decorator: VipDecorator, MealDecorator</td></tr>
+    <tr><td>CR-07</td><td>Attendees hear about date changes without staff contacting each one.</td><td>Observer: AttendeeNotificationObserver</td></tr>
+    <tr><td>CR-08</td><td>Nobody can be registered twice for the same event.</td><td>Event.register()</td></tr>
+    <tr><td>CR-09</td><td>Distributions can never exceed the stock, and the stock is reduced automatically.</td><td>DistributionService, Observer: StockObserver</td></tr>
+    <tr><td>CR-10</td><td>Food aid is measured by the number of people fed; education by how well distributions match recorded needs.</td><td>Strategy: FoodAid/EducationImpactStrategy</td></tr>
+    <tr><td>CR-11</td><td>Admins add, rename and remove skills and resource categories without a developer.</td><td>CRUD: GenericDAO, LookupController</td></tr>
+    <tr><td>CR-12</td><td>Passwords are stored only as hashes.</td><td>PersonService (SHA-256)</td></tr>
+    <tr><td>CR-13</td><td>Data is kept when the application is closed and opened again.</td><td>Singleton: DatabaseManager + GenericDAO (SQLite)</td></tr>
+  </tbody>
+</table>
+
+<h1>5. Non-Functional Requirements</h1>
+<table>
+  <thead><tr><th class="id">ID</th><th style="width:22%">Quality</th><th>Requirement</th></tr></thead>
+  <tbody>
+    <tr><td>NFR-1</td><td>Maintainability</td><td>Each class has one responsibility and depends on interfaces or abstract classes where behaviour varies, so a change is made in one place.</td></tr>
+    <tr><td>NFR-2</td><td>Extensibility (open/closed)</td><td>A new delivery channel, impact measure, receipt section, ticket extra or observer is added by writing one new class, without editing existing ones; a new donation or event type is one new class and one line in its factory.</td></tr>
+    <tr><td>NFR-3</td><td>Usability</td><td>Each window shows the result of every action in its output area; every invalid entry (non-number, bad date, unknown id) shows a clear message instead of crashing.</td></tr>
+    <tr><td>NFR-4</td><td>Data consistency</td><td>All services and controllers share one database connection (Singleton) and the same service objects, so every window sees the same data.</td></tr>
+    <tr><td>NFR-5</td><td>Data integrity</td><td>Invalid donations, hours and distributions are rejected; stock cannot go below zero; a person cannot be registered twice for an event.</td></tr>
+    <tr><td>NFR-6</td><td>Security</td><td>Passwords are stored as SHA-256 hashes.</td></tr>
+    <tr><td>NFR-7</td><td>Persistence</td><td>Data is stored in a local SQLite file and survives restarts; deleting the file restores the sample data.</td></tr>
+    <tr><td>NFR-8</td><td>Portability</td><td>Runs on any operating system with Java 21 and Maven; no external services or database server are required.</td></tr>
+    <tr><td>NFR-9</td><td>Performance</td><td>Every operation completes instantly for the expected data size (hundreds of records).</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 6 ============================ -->
+<section class="new-page">
+<h1>6. System Design</h1>
+<h2>6.1 Architecture - Model View Controller</h2>
+<p>The code is organized in three layers. The user only talks to a View; the Controller receives the user's actions from its view, calls the Model (services and domain classes) and sends the results back to the view.</p>
+<table>
+  <thead><tr><th style="width:13%">Layer</th><th style="width:44%">Classes and packages (<code>impacthub.*</code>)</th><th>Responsibility</th></tr></thead>
+  <tbody>
+    <tr><td>Model</td><td>persistence, people, lookup, notification (+ channels), observer, donation (+ receipt), event (+ ticket), volunteer, beneficiary - the services, domain classes and the data store</td><td>Business data and rules: services, domain classes, patterns and storage.</td></tr>
+    <tr><td>View</td><td>View (interface) and PersonView, DonationView, EventView, VolunteerView, BeneficiaryView, LookupView</td><td>The JavaFX windows: read the user's input and display results. Each view creates and talks only to its own controller (1 to 1).</td></tr>
+    <tr><td>Controller</td><td>PersonController, DonationController, EventController, VolunteerController, BeneficiaryController, LookupController</td><td>One controller per window: validates the input, calls the services and tells the view what to show.</td></tr>
+    <tr><td>Entry point</td><td>impacthub.App</td><td>Creates the services, plugs in the notification strategies, subscribes the observers, adds the sample data and opens the main menu.</td></tr>
+  </tbody>
+</table>
+<p>Each view and controller sits in the package of the module it serves (for example <code>donation.DonationView</code>), so one team member owns a whole vertical slice; the layer of a class is given by its role, not its package.</p>
+
+<h3>Design quality checklist</h3>
+<p>The class design was checked against the course's list of common class-diagram mistakes:</p>
+<table>
+  <thead><tr><th style="width:26%">Rule</th><th>How the design meets it</th></tr></thead>
+  <tbody>
+    <tr><td>No empty classes</td><td>All 72 classes have attributes or operations; enumerations list their values.</td></tr>
+    <tr><td>No standalone classes</td><td>Every class, including each enumeration, takes part in at least one of the 145 relationships.</td></tr>
+    <tr><td>No inheritance cycles</td><td>All hierarchies are trees.</td></tr>
+    <tr><td>No single inheritance</td><td>Every parent has at least two children and every interface at least two implementations, e.g. Person (3), Donation (3), Event (3), Receipt (2), ReceiptDecorator (2), Ticket (2), TicketDecorator (2), View (6), Observer (5), Subject (3), NotificationStrategy (3), ImpactEvaluationStrategy (2).</td></tr>
+    <tr><td>Use interfaces</td><td>Subject, Observer, NotificationStrategy, ImpactEvaluationStrategy, Receipt, Ticket and View are interfaces; clients depend on them rather than on concrete classes.</td></tr>
+    <tr><td>Balanced relationships</td><td>The diagrams use association, aggregation, composition, generalization, realization and dependency.</td></tr>
+    <tr><td>No system class</td><td>There is no all-knowing "System" class; work is split across focused services, controllers and domain classes.</td></tr>
+    <tr><td>Diagram matches code</td><td>Every diagram class exists in the code with the same kind, attributes and operations, and every relationship is present in the code (the "observes" links are the subscriptions that App makes with addObserver()). This was checked automatically against the source.</td></tr>
+  </tbody>
+</table>
+
+<h2>6.2 Class Diagrams</h2>
+<p>Seven diagrams are provided: the full system and one focused view per Phase 1 grading item. All of them are generated from one Mermaid model of the code (<code>docs/class-diagram/NGO_UML_class_diagram.mmd</code>) and drawn with Graphviz, so they always agree with each other and with the implementation. High-resolution PNG and SVG copies and the source are in the <code>docs/class-diagram</code> folder.</p>
+<p>Notation: + public, - private; underlined members are static; italic names are abstract classes or interfaces; filled diamond = composition, hollow diamond = aggregation, solid arrow = association, dashed arrow = dependency, hollow triangle = generalization (solid) or realization (dashed).</p>
+<table>
+  <thead><tr><th style="width:13%">Figure</th><th>Diagram</th><th style="width:30%">Phase 1 grading item</th></tr></thead>
+  <tbody>
+    <tr><td>Figure 1</td><td>Full class diagram - all 72 classes, interfaces and enumerations with their 145 relationships</td><td>Class diagram</td></tr>
+    <tr><td>Figure 2</td><td>Notification channel and impact evaluation</td><td>Strategy pattern</td></tr>
+    <tr><td>Figure 3</td><td>Donation, event and distribution notifications</td><td>Observer pattern</td></tr>
+    <tr><td>Figure 4</td><td>Receipts and tickets</td><td>Decorator pattern</td></tr>
+    <tr><td>Figure 5</td><td>Creating donations and events</td><td>Factory pattern</td></tr>
+    <tr><td>Figure 6</td><td>The shared database connection</td><td>Singleton pattern</td></tr>
+    <tr><td>Figure 7</td><td>Application layers and lookup tables</td><td>MVC and CRUD lookup tables</td></tr>
+  </tbody>
+</table>
+</section>
+
+<section class="figure-page"><img src="../class-diagram/NGO_UML_class_diagram.png" alt="Full class diagram"><div class="caption">Figure 1: Full class diagram of the system</div></section>
+<section class="figure-page"><img src="../class-diagram/02-strategy.png" alt="Strategy pattern diagram"><div class="caption">Figure 2: Strategy pattern - notification channels and impact evaluation</div></section>
+<section class="figure-page"><img src="../class-diagram/03-observer.png" alt="Observer pattern diagram"><div class="caption">Figure 3: Observer pattern - donations, events and distributions</div></section>
+<section class="figure-page"><img src="../class-diagram/04-decorator.png" alt="Decorator pattern diagram"><div class="caption">Figure 4: Decorator pattern - receipts and tickets</div></section>
+<section class="figure-page"><img src="../class-diagram/05-factory.png" alt="Factory pattern diagram"><div class="caption">Figure 5: Factory pattern - creating donations and events</div></section>
+<section class="figure-page"><img src="../class-diagram/06-singleton.png" alt="Singleton pattern diagram"><div class="caption">Figure 6: Singleton pattern - the shared database connection</div></section>
+<section class="figure-page"><img src="../class-diagram/07-mvc-lookups.png" alt="MVC and lookup tables diagram"><div class="caption">Figure 7: MVC architecture and CRUD lookup tables</div></section>
+
+<section class="back-portrait">
+<h2>6.3 Design Patterns Applied</h2>
+<h3>6.3.1 Strategy (Figure 2)</h3>
+<p><b>Problem.</b> Some behaviours have several interchangeable variants: how a message is delivered and how a program's impact is measured. An if/else on the variant would have to be edited every time a variant is added, breaking the open/closed principle.</p>
+<p><b>Solution.</b> Each variant is a class behind a common interface, and a context object holds a reference to one strategy and delegates to it. The pattern is applied twice:</p>
+<table>
+  <thead><tr><th style="width:15%">Use</th><th style="width:22%">Strategy interface</th><th style="width:25%">Concrete strategies</th><th>Context (how the strategy is chosen)</th></tr></thead>
+  <tbody>
+    <tr><td>Communication channel</td><td>NotificationStrategy</td><td>EmailStrategy, SmsStrategy, SocialMediaStrategy</td><td>NotificationService - registerStrategy() maps each Channel to a strategy; the recipient's preferredChannel picks it, and setStrategy() sets the default (e-mail)</td></tr>
+    <tr><td>Impact evaluation</td><td>ImpactEvaluationStrategy</td><td>FoodAidImpactStrategy, EducationImpactStrategy</td><td>ImpactEvaluator - setStrategy(); DistributionService picks the strategy for the program type chosen in BeneficiaryController</td></tr>
+  </tbody>
+</table>
+<pre>// NotificationService (Context)
+public boolean sendNotification(Person to, Message msg) {
+    NotificationStrategy chosen = strategy;            // default strategy
+    Channel preferred = to.getPreferredChannel();
+    if (preferred != null &amp;&amp; strategies.containsKey(preferred)) {
+        chosen = strategies.get(preferred);            // recipient's channel
+    }
+    return chosen != null &amp;&amp; chosen.send(to, msg);
+}</pre>
+<p><b>Benefit.</b> A WhatsApp channel or a health-program impact measure is one new class plus one registration line; the contexts do not change.</p>
+
+<h3>6.3.2 Observer (Figure 3)</h3>
+<p><b>Problem.</b> When a donation is recorded, an event changes or resources are distributed, several independent reactions must follow (receipt, thank-you, totals, attendee messages, stock). If the services called each reaction directly they would be tightly coupled to all of them.</p>
+<p><b>Solution.</b> DonationService, EventService and DistributionService implement Subject and keep a list of Observers. Every state change creates a <code>ChangeEvent</code> (type, payload, timestamp) and calls <code>notifyObservers(change)</code>, which calls <code>update(source, change)</code> on each observer. <code>App</code> subscribes the observers when the application starts.</p>
+<table>
+  <thead><tr><th style="width:20%">Role</th><th style="width:32%">Class</th><th>In the code</th></tr></thead>
+  <tbody>
+    <tr><td>Subject</td><td>Subject (interface)</td><td>addObserver(), removeObserver(), notifyObservers(change)</td></tr>
+    <tr><td>Observer</td><td>Observer (interface)</td><td>update(source, change)</td></tr>
+    <tr><td>Concrete subjects</td><td>DonationService, EventService, DistributionService</td><td>recordDonation(); changeDate(), changeVenue(), sendReminders(); recordDistribution()</td></tr>
+    <tr><td>Concrete observers</td><td>ReceiptObserver, ThankYouObserver, StatsObserver</td><td>Print the receipt; thank the donor; update the donor's and the organization's totals</td></tr>
+    <tr><td>Concrete observers</td><td>AttendeeNotificationObserver, StockObserver</td><td>Message every attendee; reduce the resource's stock</td></tr>
+  </tbody>
+</table>
+<pre>// DonationService (Concrete Subject)
+public Donation recordDonation(String type, Donor donor, double amount) {
+    if (amount &lt;= 0) {
+        throw new IllegalArgumentException("The amount must be more than 0.");
+    }
+    Donation donation = DonationFactory.create(type, donor, amount);
+    donations.insert(donation);
+    notifyObservers(new ChangeEvent("DONATION_RECORDED", donation));
+    people.update(donation.getDonor()); // save the new total set by StatsObserver
+    return donation;
+}</pre>
+<p><b>Benefit.</b> Subjects only know the Observer interface, so a new reaction (for example a Phase 2 activity log or dashboard) is one new observer; the services do not change.</p>
+
+<h3>6.3.3 Decorator (Figure 4)</h3>
+<p><b>Problem.</b> Receipts and tickets need optional extras in any combination. A subclass for every combination would cause a class explosion.</p>
+<p><b>Solution.</b> Each family has a component interface, a plain concrete component and an abstract decorator that is a component and wraps one (<code>wrapped</code>). Concrete decorators return the wrapped result plus their own part.</p>
+<table>
+  <thead><tr><th style="width:12%">Family</th><th style="width:24%">Component</th><th style="width:18%">Concrete component</th><th style="width:18%">Decorator</th><th>Concrete decorators</th></tr></thead>
+  <tbody>
+    <tr><td>Receipts</td><td>Receipt (render())</td><td>BasicReceipt</td><td>ReceiptDecorator</td><td>TaxInfoDecorator, ThankYouNoteDecorator</td></tr>
+    <tr><td>Tickets</td><td>Ticket (getPrice(), getDescription())</td><td>BasicTicket (100 EGP)</td><td>TicketDecorator</td><td>VipDecorator (+150 EGP), MealDecorator (+40 EGP)</td></tr>
+  </tbody>
+</table>
+<pre>// DonationService.buildReceipt()
+Receipt receipt = new BasicReceipt(donation);
+if (options.contains("TAX")) {
+    receipt = new TaxInfoDecorator(receipt);
+}
+if (options.contains("THANK_YOU")) {
+    receipt = new ThankYouNoteDecorator(receipt);
+}
+return receipt;</pre>
+<p><b>Benefit.</b> With n decorators and m components only n + m classes are needed, and new extras (for example a signature) are one new class.</p>
+
+<h3>6.3.4 Factory (Figure 5)</h3>
+<p><b>Problem.</b> The user picks the kind of donation (online, check, in-kind) and the kind of event (fundraiser, workshop, outreach) at runtime. If the services created them with <code>new</code> they would depend on every concrete class and repeat the choice in several places.</p>
+<p><b>Solution.</b> A factory class with a static <code>create(type, ...)</code> method is the one place that turns the user's choice into the right concrete object; the services only work with the abstract product.</p>
+<table>
+  <thead><tr><th style="width:22%">Role</th><th>Donations</th><th>Events</th></tr></thead>
+  <tbody>
+    <tr><td>Factory</td><td>DonationFactory.create(type, donor, amount)</td><td>EventFactory.create(type, name, date, venue)</td></tr>
+    <tr><td>Client</td><td>DonationService.recordDonation()</td><td>EventService.createEvent()</td></tr>
+    <tr><td>Product</td><td>Donation (abstract)</td><td>Event (abstract)</td></tr>
+    <tr><td>Concrete products</td><td>OnlineDonation, CheckDonation, InKindDonation</td><td>Fundraiser, Workshop, Outreach</td></tr>
+  </tbody>
+</table>
+<pre>public class DonationFactory {
+    public static Donation create(String type, Donor donor, double amount) {
+        return switch (type) {
+            case "Online" -&gt; new OnlineDonation(donor, amount);
+            case "Check" -&gt; new CheckDonation(donor, amount);
+            case "InKind" -&gt; new InKindDonation(donor, amount);
+            default -&gt; throw new IllegalArgumentException("Unknown donation type: " + type);
+        };
+    }
+}</pre>
+<p><b>Benefit.</b> The services never name a concrete donation or event class; a new type is one new product class and one line in its factory.</p>
+
+<h3>6.3.5 Singleton (Figure 6)</h3>
+<p><b>Problem.</b> Every service and controller must work on the same data. Several database connections would waste resources and could see different data.</p>
+<p><b>Solution.</b> DatabaseManager has a private constructor, a static instance and a static synchronized <code>getInstance()</code> that creates the instance on first use (lazy initialization) and returns the same object afterwards. It holds the one JDBC connection, which every <code>GenericDAO&lt;T&gt;</code> uses.</p>
+<pre>private static DatabaseManager instance;
+private final Connection connection;
+
+private DatabaseManager() { ... connection = DriverManager.getConnection(url); }
+
+public static synchronized DatabaseManager getInstance() {
+    if (instance == null) {
+        instance = new DatabaseManager();
+    }
+    return instance;
+}</pre>
+<p><b>Benefit.</b> One global access point for data; the database file could be replaced by a database server in Phase 2 by changing only this class.</p>
+
+<h2>6.4 CRUD Lookup Tables</h2>
+<p>Reference values that change over time are not hard-coded. They are rows of lookup tables that the administrator maintains from the "Lookup tables" window.</p>
+<table>
+  <thead><tr><th style="width:20%">Lookup table</th><th style="width:18%">Row class</th><th style="width:34%">Used by</th><th>Sample rows</th></tr></thead>
+  <tbody>
+    <tr><td>Volunteer skills</td><td>Skill</td><td>Volunteer.skills, VolunteerService.findBySkill()</td><td>First aid, Teaching, Cooking</td></tr>
+    <tr><td>Resource categories</td><td>ResourceCategory</td><td>Resource.category, Need.category, impact evaluation</td><td>Food, Education</td></tr>
+  </tbody>
+</table>
+<p>Both are stored with the generic <code>GenericDAO&lt;T&gt;</code>, which provides <code>insert()</code>, <code>findById()</code>, <code>findAll()</code>, <code>update()</code> and <code>delete()</code> for any class with an id. <code>LookupController</code> offers <code>loadTable()</code>, <code>createItem()</code>, <code>updateItem()</code> and <code>deleteItem()</code> for either table, and <code>LookupView</code> shows the rows.</p>
+
+<h2>6.5 Main Design Decisions</h2>
+<table>
+  <thead><tr><th style="width:27%">Option considered</th><th style="width:27%">Chosen design</th><th>Reason</th></tr></thead>
+  <tbody>
+    <tr><td>Factory Method (one creator class per product)</td><td>Simple factories DonationFactory and EventFactory with create(type)</td><td>The brief asks for objects "of different types based on user input"; one small factory per family meets it with the fewest classes.</td></tr>
+    <tr><td>A separate DAO class for every table</td><td>One GenericDAO&lt;T&gt; that stores each object in a table named after its class</td><td>All tables get the same five CRUD operations with no extra classes; adding a new kind of record needs no new data-access code.</td></tr>
+    <tr><td>Data kept only in memory</td><td>SQLite file behind the DatabaseManager Singleton</td><td>Data survives restarts and the diagram's JDBC <code>Connection</code> is real; SQLite needs no server.</td></tr>
+    <tr><td>Console menus</td><td>Basic JavaFX windows, one per module</td><td>Each module is shown and tested on its own window with plain forms; the look is deliberately simple.</td></tr>
+    <tr><td>Categories stored as plain Strings</td><td>Lookup tables Skill and ResourceCategory</td><td>Editable at runtime (CRUD) without changing code.</td></tr>
+    <tr><td>Real e-mail and SMS providers</td><td>Channel strategies that print the message</td><td>Phase 1 needs no external accounts; real providers can replace the strategies in Phase 2 without changing NotificationService.</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 7 ============================ -->
+<section class="new-page">
+<h1>7. Work Distribution</h1>
+<p>Each member owns a vertical slice of the system and the pattern used in it. Every one of the 72 classes is assigned to exactly one member; the history of the GitHub repository shows each member's commits.</p>
+<table>
+  <thead><tr><th style="width:15%">Member</th><th style="width:9%">ID</th><th style="width:19%">Area</th><th style="width:15%">Patterns</th><th>Classes</th></tr></thead>
+  <tbody>
+    <tr><td>Saifeldin Tamer ElSayes<br><span class="mono">@saifeldinsais</span></td><td>22P0233</td><td>Foundation, people and lookup tables: persistence, people, lookup</td><td>Singleton, CRUD lookup tables, MVC</td><td>DatabaseManager, GenericDAO, View, Person, Donor, Volunteer, Beneficiary, Skill, PersonService, PersonView, PersonController, ResourceCategory, LookupView, LookupController (and the App entry point)</td></tr>
+    <tr><td>Ahmed Khaled Hamdy<br><span class="mono">@ahmed-khaled04</span></td><td>22P0024</td><td>Observer and notification core: observer, notification</td><td>Observer, Strategy (context)</td><td>Subject, Observer, ChangeEvent, ReceiptObserver, ThankYouObserver, StatsObserver, AttendeeNotificationObserver, StockObserver, NotificationService, NotificationStrategy, Channel, Message</td></tr>
+    <tr><td>Mohamed Emad Eldeen<br><span class="mono">@Mohamed-Dahy</span></td><td>22P0065</td><td>Donations and notification channels: donation, notification.channels</td><td>Factory, Strategy, Observer (subject)</td><td>DonationService, DonationFactory, Donation, OnlineDonation, CheckDonation, InKindDonation, DonationView, DonationController, EmailStrategy, SmsStrategy, SocialMediaStrategy</td></tr>
+    <tr><td>Seif Eldeen Ibrahim<br><span class="mono">@seif-elden</span></td><td>22P0023</td><td>Events and volunteer logic: event, volunteer</td><td>Factory, Observer (subject)</td><td>EventService, EventFactory, Event, Fundraiser, Workshop, Outreach, EventStatus, EventView, EventController, VolunteerService, Assignment, VolunteerController</td></tr>
+    <tr><td>Yousef Sameh Fathi<br><span class="mono">@YoussifSameh2004</span></td><td>22P0010</td><td>Decorators and volunteer output: donation.receipt, event.ticket, volunteer</td><td>Decorator</td><td>Receipt, BasicReceipt, ReceiptDecorator, TaxInfoDecorator, ThankYouNoteDecorator, Ticket, BasicTicket, TicketDecorator, VipDecorator, MealDecorator, VolunteerView, VolunteerCertificate</td></tr>
+    <tr><td>Mohamed Khaled Mohamed Anwar<br><span class="mono">@tob-git</span></td><td>22P0041</td><td>Beneficiaries and impact evaluation: beneficiary</td><td>Strategy, Observer (subject)</td><td>DistributionService, Distribution, Resource, Need, ImpactEvaluator, ImpactEvaluationStrategy, FoodAidImpactStrategy, EducationImpactStrategy, ImpactReport, BeneficiaryView, BeneficiaryController</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================ 8 ============================ -->
+<h1>8. Traceability to the Phase 1 Grading Criteria</h1>
+<table>
+  <thead><tr><th style="width:15%">Grading item</th><th style="width:7%">Marks</th><th style="width:13%">Diagram</th><th>Classes</th><th style="width:21%">Source location</th></tr></thead>
+  <tbody>
+    <tr><td>Class diagram</td><td>1</td><td>Figure 1 (and all figures)</td><td>All 72 classes, interfaces and enumerations</td><td>docs/class-diagram/</td></tr>
+    <tr><td>Strategy pattern</td><td>0.5</td><td>Figure 2</td><td>NotificationStrategy, ImpactEvaluationStrategy and their concrete strategies; NotificationService, ImpactEvaluator</td><td>notification, notification/channels, beneficiary</td></tr>
+    <tr><td>Observer pattern</td><td>0.5</td><td>Figure 3</td><td>Subject, Observer, ChangeEvent; DonationService, EventService, DistributionService; 5 concrete observers</td><td>observer and the three services</td></tr>
+    <tr><td>Decorator pattern</td><td>0.5</td><td>Figure 4</td><td>Receipt + ReceiptDecorator family; Ticket + TicketDecorator family</td><td>donation/receipt, event/ticket</td></tr>
+    <tr><td>Factory pattern</td><td>0.5</td><td>Figure 5</td><td>DonationFactory and EventFactory with their products</td><td>donation, event</td></tr>
+    <tr><td>Singleton pattern</td><td>0.5</td><td>Figure 6</td><td>DatabaseManager (with GenericDAO)</td><td>persistence</td></tr>
+    <tr><td>MVC</td><td>0.5</td><td>Figure 7</td><td>View and 6 views, 6 controllers, App</td><td>*View, *Controller in each module; App</td></tr>
+    <tr><td>Client requirements</td><td>0.5</td><td>-</td><td>Section 4 (CR-01 to CR-13)</td><td>-</td></tr>
+    <tr><td>CRUD lookup tables</td><td>0.5</td><td>Figure 7</td><td>Skill, ResourceCategory, GenericDAO, LookupController, LookupView</td><td>lookup, people, persistence</td></tr>
+  </tbody>
+</table>
+<p>Source paths are relative to <code>src/main/java/impacthub/</code>.</p>
+
+<!-- ============================ 9 ============================ -->
+<h1>9. Running the System</h1>
+<h2>9.1 Build and Run</h2>
+<p>From the project folder (requires JDK 21 and Maven):</p>
+<pre>mvn javafx:run      # start the application
+mvn test            # run the unit tests (they use target/test.db, never impacthub.db)</pre>
+<p>Alternatively, open the folder as a Maven project in IntelliJ IDEA and run <code>impacthub.App</code>. Notifications and receipts are printed in the terminal (or the IDE's run console). Delete <code>impacthub.db</code> to start again with fresh sample data.</p>
+
+<h2>9.2 Sample Data</h2>
+<p>The database is filled with sample data on the first run (every sample account's password is <code>1234</code>). Each kind of record has its own table, so ids start at 1 in each table:</p>
+<table>
+  <thead><tr><th style="width:24%">Ids</th><th>Records</th></tr></thead>
+  <tbody>
+    <tr><td>Skills 1 - 3</td><td>First aid, Teaching, Cooking</td></tr>
+    <tr><td>Resource categories 1 - 2</td><td>Food, Education</td></tr>
+    <tr><td>Resources 1 - 2</td><td>Rice bag (Food, 200 bags), School kit (Education, 100 kits)</td></tr>
+    <tr><td>People 1 - 2</td><td>Donors: Sara Ali (individual, e-mail, sara@mail.com), Omar Co. (corporate, SMS, omar@mail.com)</td></tr>
+    <tr><td>People 3 - 4</td><td>Volunteers: Ali Hassan (First aid; weekends; prefers outreach; e-mail), Mona Adel (Teaching; evenings; prefers workshops; social media)</td></tr>
+    <tr><td>People 5 - 6</td><td>Beneficiaries: Fatma Said (Cairo, family of 5, needs food), Hassan Omar (Giza, family of 3, needs school supplies)</td></tr>
+    <tr><td>Events 1 - 2</td><td>Charity Gala (fundraiser, in 2 weeks, Grand Hall), First Aid Training (workshop, in 1 week, Community Center)</td></tr>
+  </tbody>
+</table>
+
+<h2>9.3 Demonstration Scenario</h2>
+<ol>
+  <li><b>People:</b> log in as sara@mail.com / 1234; sign up a new volunteer; search with an empty name to see everyone's ids; delete the new person.</li>
+  <li><b>Donations:</b> record an Online donation of 500 EGP for donor 1. The terminal shows the thank-you e-mail and the receipt (Observer), and the window shows the donor's new total. Record a Check donation for donor 2 - the thank-you arrives by SMS (Strategy). Then generate a receipt for donation 1 with tax information and a thank-you note (Decorator).</li>
+  <li><b>Events:</b> create a Workshop (Factory); register person 1 for event 1; sell person 2 a ticket for event 1 with VIP seating and dinner (290 EGP); change event 1's date - every attendee is notified in the terminal (Observer).</li>
+  <li><b>Volunteers:</b> list volunteers; assign volunteer 3 to event 2 as "First aider"; log 4 hours on that assignment; issue a certificate for volunteer 3.</li>
+  <li><b>Beneficiaries:</b> give 10 rice bags (resource 1) to beneficiary 5 and see the stock drop to 190 (Observer); try 500 bags (refused); give 1 school kit (resource 2) to beneficiary 6; evaluate the Food and the Education impact (Strategy).</li>
+  <li><b>Lookup tables:</b> load the Skill table, create "Driving", rename it and delete it; do the same for a resource category.</li>
+</ol>
+</section>
+
+</body>
+</html>

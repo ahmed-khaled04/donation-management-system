@@ -2,7 +2,7 @@
 
 CSE336 Software Design Patterns, Phase 1. Java 21 · JavaFX 21 · SQLite · Maven
 
-- Requirements and design: [docs/SRS.md](docs/SRS.md)
+- Requirements and design: [docs/SRS.pdf](docs/SRS.pdf) (source: `docs/srs/SRS.html`)
 - Class diagram: [docs/class-diagram/](docs/class-diagram/)
 
 ## Run
