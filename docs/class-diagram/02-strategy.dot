@@ -56,6 +56,12 @@ digraph G {
   subgraph cluster_PERS {
     label=<<FONT POINT-SIZE="15" COLOR="#5f6265"><B>PERSISTENCE | DAO + SINGLETON</B></FONT>>; fillcolor="#f0f2f5"; color="#d5dae2"; margin=14;
   }
+  subgraph cluster_ACT {
+    label=<<FONT POINT-SIZE="15" COLOR="#62674a"><B>DASHBOARD | ACTIVITY LOG</B></FONT>>; fillcolor="#f6f9e4"; color="#e3ecb8"; margin=14;
+  }
+  subgraph cluster_VAL {
+    label=<<FONT POINT-SIZE="15" COLOR="#585c70"><B>VALIDATION</B></FONT>>; fillcolor="#eceefd"; color="#c9cff5"; margin=14;
+  }
   NotificationStrategy -> EmailStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
   NotificationStrategy -> SmsStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];
   NotificationStrategy -> SocialMediaStrategy [dir="back", arrowtail="empty", color="#36425c", style="dashed"];

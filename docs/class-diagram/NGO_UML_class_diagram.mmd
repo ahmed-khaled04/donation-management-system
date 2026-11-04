@@ -46,9 +46,11 @@ direction TB
             -payload: Object
             -timestamp: DateTime
             -type: String
+            -description: String
             +getType() String
             +getPayload() Object
             +getTimestamp() DateTime
+            +getDescription() String
         }
 
     }
@@ -125,12 +127,22 @@ direction TB
         }
 
         class PersonService {
+            -observers: List~Observer~
             +register(type: String, name: String, email: String, phone: String, password: String) Person
             +authenticate(email: String, password: String) Person
             +findById(id: int) Person
             +searchByName(name: String) List~Person~
             +update(p: Person) void
             +delete(id: int) boolean
+        }
+
+        class Session {
+            -observers: List~Observer~
+            -currentUser: Person
+            +login(person: Person) void
+            +logout() void
+            +isLoggedIn() boolean
+            +getCurrentUser() Person
         }
 
     }
@@ -143,6 +155,7 @@ direction TB
             +getDonationsByDonor(donor: Donor) List~Donation~
             +generateTaxStatement(donor: Donor, year: int) String
             +buildReceipt(donation: Donation, options: List~String~) Receipt
+            +getAllDonations() List~Donation~
         }
 
         class DonationFactory {
@@ -212,6 +225,7 @@ direction TB
             +markAttendance(event: Event, person: Person) void
             +sellTicket(event: Event, person: Person, extras: List~String~) Ticket
             +sendReminders(event: Event) void
+            +getTicketsByEvent(event: Event) List~Ticket~
         }
 
         class EventFactory {
@@ -254,20 +268,28 @@ direction TB
         class Ticket {
             +getPrice() double
             +getDescription() String
+            +getId() int
+            +getEvent() Event
         }
 
         class BasicTicket {
+            -id: int
             -basePrice: double
             -event: Event
             -holder: Person
             +getPrice() double
             +getDescription() String
+            +getId() int
+            +getEvent() Event
         }
 
         class TicketDecorator {
+            -id: int
             -wrapped: Ticket
             +getPrice() double
             +getDescription() String
+            +getId() int
+            +getEvent() Event
         }
 
         class VipDecorator {
@@ -350,6 +372,7 @@ direction TB
     %% ===================== VOLUNTEERS =====================
     namespace Volunteers {
         class VolunteerService {
+            -observers: List~Observer~
             +assign(v: Volunteer, e: Event, role: String) Assignment
             +logHours(a: Assignment, hours: double) void
             +findBySkill(skill: Skill) List~Volunteer~
@@ -385,6 +408,8 @@ direction TB
         class ResourceCategory {
             -id: int
             -name: String
+            -program: String
+            +getProgram() String
         }
 
     }
@@ -404,11 +429,12 @@ direction TB
         class EventView {
             +showEventList(list) void
             +showTicket(ticket) void
+            +showTicketList(list) void
         }
 
         class BeneficiaryView {
             +showDistributions(list) void
-            +showImpact(score) void
+            +showImpact(report) void
         }
 
         class VolunteerView {
@@ -425,6 +451,13 @@ direction TB
         class LookupView {
             +showTable(items: List) void
             +showItemForm() void
+            +addObserver(o: Observer) void
+        }
+
+        class DashboardView {
+            +showAccount(user: Person) void
+            +showActivity(entries: List~ActivityEntry~) void
+            +closeOtherWindows() void
         }
 
     }
@@ -443,6 +476,7 @@ direction TB
             +changeDate(eventId: int, newDate: DateTime) void
             +registerAttendee(eventId: int, personId: int) void
             +sellTicket(eventId: int, personId: int, extras: List~String~) void
+            +loadTickets(eventId: int) void
         }
 
         class BeneficiaryController {
@@ -463,13 +497,24 @@ direction TB
             +login(email: String, password: String) void
             +search(name: String) void
             +deletePerson(id: int) void
+            +isLoggedIn() boolean
         }
 
         class LookupController {
+            -observers: List~Observer~
             +loadTable(table: String) void
             +createItem(table: String, name: String) void
             +updateItem(table: String, id: int, name: String) void
             +deleteItem(table: String, id: int) void
+        }
+
+        class DashboardController {
+            -wasLoggedIn: boolean
+            +update(source: Subject, change: ChangeEvent) void
+            +refresh() void
+            +openService(service: Supplier~View~) void
+            +openAuth(openWindow: Runnable) void
+            +logout() void
         }
 
     }
@@ -490,6 +535,34 @@ direction TB
             -DatabaseManager()
             +getInstance() DatabaseManager$
             +getConnection() Connection
+        }
+
+    }
+
+    %% ===================== DASHBOARD (Activity log) =====================
+    namespace Dashboard_ActivityLog {
+        class ActivityLogService {
+            -observers: List~Observer~
+            -session: Session
+            +update(source: Subject, change: ChangeEvent) void
+            +getRecent() List~ActivityEntry~
+        }
+
+        class ActivityEntry {
+            -id: int
+            -time: DateTime
+            -actor: String
+            -description: String
+        }
+
+    }
+
+    %% ===================== VALIDATION =====================
+    namespace Validation_Rules {
+        class Validation {
+            +requireText(value: String, label: String) String$
+            +requirePositive(value: double, max: double, label: String) void$
+            +requireFutureDate(date: DateTime) void$
         }
 
     }
@@ -535,6 +608,7 @@ direction TB
     style Volunteer fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
     style Beneficiary fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
     style PersonService fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
+    style Session fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B3D1E
     %% Donations_Factory_Decorator
     style DonationService fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
     style DonationFactory fill:#FFFDE7,stroke:#F9A825,stroke-width:2px,color:#4A3B00
@@ -585,6 +659,7 @@ direction TB
     style VolunteerView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
     style PersonView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
     style LookupView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
+    style DashboardView fill:#E0F7FA,stroke:#00838F,stroke-width:2px,color:#00363A
     %% Controllers_MVC
     style DonationController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
     style EventController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
@@ -592,9 +667,15 @@ direction TB
     style VolunteerController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
     style PersonController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
     style LookupController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
+    style DashboardController fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D2A4A
     %% Persistence_Singleton
     style GenericDAO fill:#ECEFF1,stroke:#455A64,stroke-width:2px,color:#1C262B
     style DatabaseManager fill:#ECEFF1,stroke:#455A64,stroke-width:2px,color:#1C262B
+    %% Dashboard_ActivityLog
+    style ActivityLogService fill:#F6F9E4,stroke:#7C8B2F,stroke-width:2px,color:#3A4212
+    style ActivityEntry fill:#F6F9E4,stroke:#7C8B2F,stroke-width:2px,color:#3A4212
+    %% Validation_Rules
+    style Validation fill:#ECEEFD,stroke:#4C56A8,stroke-width:2px,color:#1E2350
 
     %% ----- relationships: OBSERVER PATTERN -----
     Subject "1" o-- "0..*" Observer : observers
@@ -762,3 +843,47 @@ direction TB
     BeneficiaryController ..> PersonService : finds person
     VolunteerController ..> PersonService : finds person
     VolunteerCertificate --> Volunteer : volunteer
+
+    %% ----- relationships: dashboard, session and validation -----
+    Subject <|.. PersonService
+    Subject <|.. VolunteerService
+    Subject <|.. LookupController
+    Subject <|.. Session
+    Subject <|.. ActivityLogService
+    Observer <|.. ActivityLogService
+    Observer <|.. DashboardController
+    View <|.. DashboardView
+    DashboardView "1" -- "1" DashboardController
+    DashboardController --> Session
+    DashboardController --> ActivityLogService : observes
+    ActivityLogService --> Session : session
+    Session --> Person : currentUser
+    PersonController --> Session
+    ActivityLogService ..> ActivityEntry : creates
+    ActivityLogService ..> GenericDAO : stores data
+    ActivityLogService ..> Person : finds actor
+    ActivityLogService ..> DonationService : observes
+    ActivityLogService ..> EventService : observes
+    ActivityLogService ..> DistributionService : observes
+    ActivityLogService ..> VolunteerService : observes
+    ActivityLogService ..> PersonService : observes
+    ActivityLogService ..> LookupController : observes
+    ActivityLogService ..> Session : observes
+    DashboardView ..> ActivityEntry : shows
+    DashboardView ..> PersonView : opens log in
+    DashboardController ..> View : opens
+    PersonService ..> Validation : validates
+    DonationService ..> Validation : validates
+    EventService ..> Validation : validates
+    VolunteerService ..> Validation : validates
+    LookupController ..> Validation : validates
+    Session ..> ChangeEvent : raises
+    PersonService ..> ChangeEvent : raises
+    VolunteerService ..> ChangeEvent : raises
+    LookupController ..> ChangeEvent : raises
+    PersonService ..> Event : updates attendees
+    LookupController ..> Volunteer : renames skills
+    LookupController ..> Beneficiary : renames needs
+    LookupController ..> Resource : renames category
+    LookupController ..> Need : renames category
+    DistributionService ..> ResourceCategory : finds program
