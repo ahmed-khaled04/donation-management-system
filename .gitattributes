@@ -1,0 +1,4 @@
+# Keep Maven launchers native on each platform.
+mvnw text eol=lf
+mvnw.cmd text eol=crlf
+*.command text eol=lf
