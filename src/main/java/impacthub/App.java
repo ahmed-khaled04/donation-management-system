@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+
 /** Starts the app: wires the services, observers and strategies, then opens the dashboard. */
 public class App extends Application {
     @Override
